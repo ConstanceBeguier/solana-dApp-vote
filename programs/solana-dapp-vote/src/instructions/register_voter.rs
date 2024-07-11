@@ -1,8 +1,20 @@
 use anchor_lang::prelude::*;
 
+use crate::constants::CHECK_TIMEINTERVALS;
+use crate::errors::VoteError;
 use crate::state::{ballot::Ballot, proposal::Proposal};
+
 pub fn register_voter(ctx: Context<RegisterVoter>) -> Result<()> {
     let ballot_account = &mut ctx.accounts.ballot;
+
+    if CHECK_TIMEINTERVALS {
+        let now = Clock::get()?.unix_timestamp as u64;
+        require!(
+            ctx.accounts.proposal.voters_registration_interval.start < now
+                && now < ctx.accounts.proposal.voters_registration_interval.end,
+            VoteError::VotersRegistrationIsClosed
+        );
+    }
 
     ballot_account.proposal = ctx.accounts.proposal.key();
     ballot_account.voter = ctx.accounts.voter.key();

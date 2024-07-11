@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::constants::CHECK_TIMEINTERVALS;
+use crate::errors::VoteError;
 use crate::state::{ballot::Ballot, proposal::Proposal};
 
 pub fn cast_vote(ctx: Context<CastVote>, choice_index: u8) -> Result<()> {
@@ -8,6 +10,15 @@ pub fn cast_vote(ctx: Context<CastVote>, choice_index: u8) -> Result<()> {
 
     ballot_account.choice_index = choice_index;
     proposal_account.choices[choice_index as usize].count += 1;
+
+    if CHECK_TIMEINTERVALS {
+        let now = Clock::get()?.unix_timestamp as u64;
+        require!(
+            proposal_account.voting_session_interval.start < now
+                && now < proposal_account.voting_session_interval.end,
+            VoteError::VotingSessionIsClosed
+        );
+    }
 
     Ok(())
 }

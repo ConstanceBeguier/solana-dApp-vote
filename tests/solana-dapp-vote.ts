@@ -3,6 +3,7 @@ import {Program} from "@coral-xyz/anchor";
 import {SolanaDappVote} from "../target/types/solana_dapp_vote";
 import {Connection, PublicKey, Keypair} from '@solana/web3.js';
 import * as assert from 'assert';
+import BN from 'bn.js';
 
 describe("solana-dapp-vote", () => {
     // Configure the client to use the local cluster.
@@ -61,7 +62,7 @@ describe("solana-dapp-vote", () => {
         const proposal = Keypair.generate();
         console.log(`Proposal pubkey: `, proposal.publicKey.toBase58());
         let txCreateProposal = await program.methods
-            .createProposal("title test", "desc test")
+            .createProposal("title test", "desc test", new BN(0), new BN(1), new BN(1), new BN(2), new BN(2), new BN(3))
             .accounts({
                 proposal: proposal.publicKey,
                 admin: admin.publicKey,

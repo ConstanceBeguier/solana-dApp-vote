@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::constants::CHECK_TIMEINTERVALS;
+use crate::errors::VoteError;
 use crate::state::proposal::{Choice, Proposal};
 
 pub fn add_choice_for_one_proposal(
@@ -7,6 +9,15 @@ pub fn add_choice_for_one_proposal(
     choice: String,
 ) -> Result<()> {
     let proposal_account = &mut ctx.accounts.proposal;
+
+    if CHECK_TIMEINTERVALS {
+        let now = Clock::get()?.unix_timestamp as u64;
+        require!(
+            proposal_account.choices_registration_interval.start < now
+                && now < proposal_account.choices_registration_interval.end,
+            VoteError::ChoicesRegistrationIsClosed
+        );
+    }
 
     proposal_account.choices.push(Choice {
         label: choice,
