@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::constants::CHECK_TIMEINTERVALS;
+use crate::constants::{CHECK_TIMEINTERVALS, EMPTY_BALLOT};
 use crate::errors::VoteError;
 use crate::state::{ballot::Ballot, proposal::Proposal};
 
@@ -18,6 +18,7 @@ pub fn register_voter(ctx: Context<RegisterVoter>) -> Result<()> {
 
     ballot_account.proposal = ctx.accounts.proposal.key();
     ballot_account.voter = ctx.accounts.voter.key();
+    ballot_account.choice_index = EMPTY_BALLOT;
 
     Ok(())
 }

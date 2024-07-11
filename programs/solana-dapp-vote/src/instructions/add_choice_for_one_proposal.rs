@@ -19,6 +19,15 @@ pub fn add_choice_for_one_proposal(
         );
     }
 
+    require!(
+        proposal_account.choices.len() < crate::constants::MAX_COUNT_OF_CHOICES,
+        VoteError::MaxCountOfChoicesReached
+    );
+
+    for c in &proposal_account.choices {
+        require!(c.label != choice, VoteError::ChoiceAlreadyExists);
+    }
+
     proposal_account.choices.push(Choice {
         label: choice,
         count: 0,
@@ -29,7 +38,7 @@ pub fn add_choice_for_one_proposal(
 
 #[derive(Accounts)]
 pub struct AddChoiceForOneProposal<'info> {
-    #[account(mut)]
+    #[account(mut, has_one = admin)]
     pub proposal: Account<'info, Proposal>,
     #[account(mut)]
     pub admin: Signer<'info>,

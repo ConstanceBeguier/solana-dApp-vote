@@ -39,6 +39,7 @@ pub fn create_proposal(
         VoteError::InvalidTimeline
     );
 
+    proposal_account.admin = *ctx.accounts.admin.key;
     proposal_account.title = title;
     proposal_account.description = description;
     proposal_account.choices_registration_interval = TimeInterval {
@@ -59,7 +60,7 @@ pub fn create_proposal(
 
 #[derive(Accounts)]
 pub struct CreateProposal<'info> {
-    #[account(init, payer = admin, space = 8 + 32 + 32 + (32 + 4)*MAX_COUNT_OF_CHOICES + 8*6)]
+    #[account(init, payer = admin, space = 8 + 32 + 32 + 32 + (32 + 2)*MAX_COUNT_OF_CHOICES + 8*6)]
     pub proposal: Account<'info, Proposal>,
     #[account(mut)]
     pub admin: Signer<'info>,

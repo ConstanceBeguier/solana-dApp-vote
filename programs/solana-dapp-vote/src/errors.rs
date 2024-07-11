@@ -10,4 +10,14 @@ pub enum VoteError {
     VotersRegistrationIsClosed,
     #[msg("Voting session is closed")]
     VotingSessionIsClosed,
+    #[msg("Too many choices for this proposal")]
+    MaxCountOfChoicesReached,
+    #[msg("Invalid choice index")]
+    InvalidChoiceIndex,
+    #[msg("Already voted")]
+    AlreadyVoted,
+    #[msg("Too many votes for this choice")]
+    CountOverflow,
+    #[msg("Choice already exists")]
+    ChoiceAlreadyExists,
 }
