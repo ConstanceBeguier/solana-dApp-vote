@@ -15,8 +15,8 @@ pub mod solana_dapp_vote {
 
     pub fn create_proposal(
         ctx: Context<CreateProposal>,
-        title: String,
-        description: String,
+        title: [u8; 16],
+        description: [u8; 32],
         choices_registration_start: u64,
         choices_registration_end: u64,
         voters_registration_start: u64,
@@ -39,7 +39,7 @@ pub mod solana_dapp_vote {
 
     pub fn add_choice_for_one_proposal(
         ctx: Context<AddChoiceForOneProposal>,
-        choice: String,
+        choice: [u8; 16],
     ) -> Result<()> {
         instructions::add_choice_for_one_proposal(ctx, choice)
     }

@@ -6,7 +6,7 @@ use crate::state::proposal::{Choice, Proposal};
 
 pub fn add_choice_for_one_proposal(
     ctx: Context<AddChoiceForOneProposal>,
-    choice: String,
+    choice: [u8; 16],
 ) -> Result<()> {
     let proposal_account = &mut ctx.accounts.proposal;
 

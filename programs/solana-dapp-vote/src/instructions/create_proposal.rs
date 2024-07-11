@@ -6,8 +6,8 @@ use crate::state::proposal::{Proposal, TimeInterval};
 
 pub fn create_proposal(
     ctx: Context<CreateProposal>,
-    title: String,
-    description: String,
+    title: [u8; 16],
+    description: [u8; 32],
     choices_registration_start: u64,
     choices_registration_end: u64,
     voters_registration_start: u64,
@@ -60,7 +60,7 @@ pub fn create_proposal(
 
 #[derive(Accounts)]
 pub struct CreateProposal<'info> {
-    #[account(init, payer = admin, space = 8 + 32 + 32 + 32 + (32 + 2)*MAX_COUNT_OF_CHOICES + 8*6)]
+    #[account(init, payer = admin, space = 8 + 32 + 16 + 32 + (16 + 2)*MAX_COUNT_OF_CHOICES + 8*6)]
     pub proposal: Account<'info, Proposal>,
     #[account(mut)]
     pub admin: Signer<'info>,

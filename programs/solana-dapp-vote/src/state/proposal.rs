@@ -3,8 +3,8 @@ use anchor_lang::prelude::*;
 #[account]
 pub struct Proposal {
     pub admin: Pubkey,
-    pub title: String,
-    pub description: String,
+    pub title: [u8; 16],
+    pub description: [u8; 32],
     pub choices: Vec<Choice>,
     pub choices_registration_interval: TimeInterval,
     pub voters_registration_interval: TimeInterval,
@@ -19,6 +19,6 @@ pub struct TimeInterval {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct Choice {
-    pub label: String,
+    pub label: [u8; 16],
     pub count: u16,
 }

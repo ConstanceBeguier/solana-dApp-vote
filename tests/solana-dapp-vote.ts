@@ -5,6 +5,36 @@ import {Connection, PublicKey, Keypair} from '@solana/web3.js';
 import * as assert from 'assert';
 import BN from 'bn.js';
 
+function stringToU8Array16(input: string): [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number] {
+    const bytes = new TextEncoder().encode(input);
+
+    if (bytes.length > 16) {
+        throw new Error("Input string is too long");
+    }
+
+    const array: [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < bytes.length; i++) {
+        array[i] = bytes[i];
+    }
+
+    return array;
+}
+
+function stringToU8Array32(input: string): [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number] {
+    const bytes = new TextEncoder().encode(input);
+
+    if (bytes.length > 32) {
+        throw new Error("Input string is too long");
+    }
+
+    const array: [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < bytes.length; i++) {
+        array[i] = bytes[i];
+    }
+
+    return array;
+}
+
 describe("solana-dapp-vote", () => {
     // Configure the client to use the local cluster.
     anchor.setProvider(anchor.AnchorProvider.env());
@@ -61,8 +91,10 @@ describe("solana-dapp-vote", () => {
         //  Create a proposal
         const proposal = Keypair.generate();
         console.log(`Proposal pubkey: `, proposal.publicKey.toBase58());
+        const proposalTitle = stringToU8Array16("title test");
+        const proposalDesc = stringToU8Array32("desc test");
         let txCreateProposal = await program.methods
-            .createProposal("title test", "desc test", new BN(0), new BN(1), new BN(1), new BN(2), new BN(2), new BN(3))
+            .createProposal(proposalTitle, proposalDesc, new BN(0), new BN(1), new BN(1), new BN(2), new BN(2), new BN(3))
             .accounts({
                 proposal: proposal.publicKey,
                 admin: admin.publicKey,
@@ -74,8 +106,9 @@ describe("solana-dapp-vote", () => {
         await connection.confirmTransaction(txCreateProposal);
 
         // Add choice c0
+        const label0 = stringToU8Array16("c0");
         let txChoice0 = await program.methods
-            .addChoiceForOneProposal("c0")
+            .addChoiceForOneProposal(label0)
             .accounts({
                 proposal: proposal.publicKey,
                 admin: admin.publicKey,
@@ -85,8 +118,9 @@ describe("solana-dapp-vote", () => {
         await connection.confirmTransaction(txChoice0);
 
         //  Add choice c1
+        const label1 = stringToU8Array16("c1");
         let txChoice1 = await program.methods
-            .addChoiceForOneProposal("c1")
+            .addChoiceForOneProposal(label1)
             .accounts({
                 proposal: proposal.publicKey,
                 admin: admin.publicKey,
