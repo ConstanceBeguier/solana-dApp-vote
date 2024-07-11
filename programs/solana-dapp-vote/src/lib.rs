@@ -13,6 +13,7 @@ use instructions::*;
 pub mod solana_dapp_vote {
     use super::*;
 
+    #[allow(clippy::too_many_arguments)]
     pub fn create_proposal(
         ctx: Context<CreateProposal>,
         title: [u8; 16],

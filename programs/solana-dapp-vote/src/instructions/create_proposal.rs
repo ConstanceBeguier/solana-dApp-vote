@@ -4,6 +4,7 @@ use crate::constants::MAX_COUNT_OF_CHOICES;
 use crate::errors::VoteError;
 use crate::state::proposal::{Proposal, TimeInterval};
 
+#[allow(clippy::too_many_arguments)]
 pub fn create_proposal(
     ctx: Context<CreateProposal>,
     title: [u8; 16],
