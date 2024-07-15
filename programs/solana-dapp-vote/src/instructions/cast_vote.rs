@@ -46,5 +46,4 @@ pub struct CastVote<'info> {
     pub ballot: Account<'info, Ballot>,
     #[account(mut)]
     pub voter: Signer<'info>,
-    pub system_program: Program<'info, System>,
 }

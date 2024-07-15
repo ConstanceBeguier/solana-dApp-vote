@@ -172,7 +172,6 @@ describe("solana-dapp-vote", () => {
                 proposal: proposal.publicKey,
                 ballot: ballot0AccountAddr,
                 voter: voter0.publicKey,
-                systemProgram: anchor.web3.SystemProgram.programId,
             })
             .signers([voter0])
             .rpc();
@@ -186,7 +185,6 @@ describe("solana-dapp-vote", () => {
                 proposal: proposal.publicKey,
                 ballot: ballot1AccountAddr,
                 voter: voter1.publicKey,
-                systemProgram: anchor.web3.SystemProgram.programId,
             })
             .signers([voter1])
             .rpc();
