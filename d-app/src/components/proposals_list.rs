@@ -1,10 +1,10 @@
 use yew::prelude::*;
 
 use wasi_sol::{
-    core::wallet::Wallet,
+    // core::wallet::Wallet,
     provider::yew::{
         connection::use_connection,
-        wallet::use_wallet,
+        // wallet::use_wallet,
     },
     // pubkey::Pubkey,
     // spawn_local, system_instruction,
@@ -14,9 +14,9 @@ use wasi_sol::{
 // use web_sys::HtmlInputElement;
 
 use crate::utils::bytes_to_string;
-use crate::state::proposal::Proposal;
+use solana_dapp_vote::state::proposal::Proposal;
 
-#[derive(Properties, PartialEq)]
+#[derive()]
 struct ListProposal {
     proposals: Vec<Proposal>,
 }
@@ -24,11 +24,11 @@ struct ListProposal {
 #[function_component]
 pub fn ProposalsList() -> Html {
     let _connection_context = use_connection();
-    let phantom_context = use_wallet::<Wallet>(Wallet::Phantom);
+    // let phantom_context = use_wallet::<Wallet>(Wallet::Phantom);
 
-    let phantom_wallet_adapter = use_state(|| phantom_context);
+    // let phantom_wallet_adapter = use_state(|| phantom_context);
 
-    let phantom_wallet_info = (*phantom_wallet_adapter).clone();
+    // let phantom_wallet_info = (*phantom_wallet_adapter).clone();
 
     let proposals = fetch_proposals();
 

@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use crate::components::login::Login;
-use crate::components::proposals_list::ProposalsList;
+// use crate::components::proposals_list::ProposalsList;
+use crate::components::proposal_form::ProposalForm;
 #[function_component]
 pub fn HomePage() -> Html {
     let connected = use_state(|| false);
@@ -12,7 +13,7 @@ pub fn HomePage() -> Html {
                 <Login {connected} />
             </header>
             if co {
-                <ProposalsList />
+                <ProposalForm />
             }
             <footer class="footer">
                 <p>{ "2024 Alyra Turing Solana." }</p>

@@ -4,10 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+chrono = "0.4.38"
 console_error_panic_hook = "0.1.7"
 log = "0.4.21"
 wasi-sol = { git = "https://github.com/GigaDAO/wasi-sol", features = ["yew"] }
 wasm-logger = "0.2.0"
 web-sys = "0.3.69"
 yew = { version = "0.21.0", features = ["csr"] }
-# { git = "https://github.com/rust-lang/regex.git" }
+solana-sdk = "=1.18.0"
+solana-client-wasm = "1.18.0"
+borsh = "1.5.1"
+wasm-bindgen-futures = "0.4.42"
+
+[dependencies.solana_dapp_vote]
+path = "../programs/solana_dapp_vote/"
