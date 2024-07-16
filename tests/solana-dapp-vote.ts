@@ -135,14 +135,14 @@ describe("solana-dapp-vote", () => {
             programID
         );
         let txRegisterVoter0 = await program.methods
-            .registerVoter()
+            .registerVoter(voter0.publicKey)
             .accounts({
                 proposal: proposal.publicKey,
                 ballot: ballot0AccountAddr,
-                voter: voter0.publicKey,
+                admin: admin.publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
-            .signers([voter0])
+            .signers([admin])
             .rpc();
         console.log(`Use 'solana confirm -v ${txRegisterVoter0}' to see the logs`);
         await connection.confirmTransaction(txRegisterVoter0);
@@ -153,14 +153,14 @@ describe("solana-dapp-vote", () => {
             programID
         );
         let txRegisterVoter1 = await program.methods
-            .registerVoter()
+            .registerVoter(voter1.publicKey)
             .accounts({
                 proposal: proposal.publicKey,
                 ballot: ballot1AccountAddr,
-                voter: voter1.publicKey,
+                admin: admin.publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
-            .signers([voter1])
+            .signers([admin])
             .rpc();
         console.log(`Use 'solana confirm -v ${txRegisterVoter1}' to see the logs`);
         await connection.confirmTransaction(txRegisterVoter1);
