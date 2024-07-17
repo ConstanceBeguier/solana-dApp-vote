@@ -1,6 +1,6 @@
 [workspace]
-members = ["programs/*", "d-app"]
-# exclude = ["d-app"]
+members = ["programs/*"]
+exclude = ["d-app"]
 [profile.release]
 overflow-checks = true
 lto = "fat"
