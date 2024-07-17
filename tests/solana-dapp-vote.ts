@@ -41,7 +41,6 @@ describe("solana-dapp-vote", () => {
 
     const program = anchor.workspace.SolanaDappVote as Program<SolanaDappVote>;
     const connection = new Connection('http://127.0.0.1:8899', 'confirmed');
-    const programID = new PublicKey("D4qRptv9HurACjb5zjyjsgEQADzPL8jckrqWTs5xuWLH");
 
     it("proposal + choices + voters registration + votes", async () => {
         // Create proposal keypair
@@ -132,7 +131,7 @@ describe("solana-dapp-vote", () => {
         // Register voter0
         const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
             [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-            programID
+            program.programId
         );
         let txRegisterVoter0 = await program.methods
             .registerVoter(voter0.publicKey)
@@ -150,7 +149,7 @@ describe("solana-dapp-vote", () => {
         //  Register voter1
         const [ballot1AccountAddr, bump1] = await PublicKey.findProgramAddress(
             [proposal.publicKey.toBuffer(), voter1.publicKey.toBuffer()],
-            programID
+            program.programId
         );
         let txRegisterVoter1 = await program.methods
             .registerVoter(voter1.publicKey)
