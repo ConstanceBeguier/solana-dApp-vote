@@ -1,14 +1,13 @@
 import { createContext, useState, useEffect, useContext, useMemo } from "react";
-import { SystemProgram } from "@solana/web3.js";
+import { SystemProgram, Keypair } from "@solana/web3.js";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import { Keypair } from "@solana/web3.js";
 import { BN } from "bn.js";
 
 import {
   getProgram,
   getVoterAddress
 } from "../utils/program";
-import { confirmTx, mockWallet, stringToU8Array16, stringToU8Array32 } from "../utils/helper";
+import { confirmTx, mockWallet, stringToU8Array16, stringToU8Array32, u8ArrayToString } from "../utils/helper";
 
 export const AppContext = createContext();
 
@@ -37,7 +36,23 @@ export const AppProvider = ({ children }) => {
   const fetch_proposals = async () => {
     const proposals = await program.account.proposal.all();
     // const sortedVotes = proposals.sort((a, b) => a.account.deadline - b.account.deadline);
-    setProposals(proposals);
+    const readableProposals = proposals.map(proposal => {
+      console.log(proposal)
+      proposal.publicKey = proposal.publicKey
+      console.log(proposal.account.title)
+      console.log(u8ArrayToString(proposal.account.title))
+      proposal.account.admin = u8ArrayToString(proposal.account.admin)
+      proposal.account.title = u8ArrayToString(proposal.account.title)
+      proposal.account.description = u8ArrayToString(proposal.account.description)
+      proposal.account.choicesRegistrationInterval.start = new Date(proposal.account.choicesRegistrationInterval.start.toString())
+      proposal.account.choicesRegistrationInterval.end = new Date(proposal.account.choicesRegistrationInterval.end.toString())
+      proposal.account.votersRegistrationInterval.start = new Date(proposal.account.votersRegistrationInterval.start.toString())
+      proposal.account.votersRegistrationInterval.end = new Date(proposal.account.votersRegistrationInterval.end.toString())
+      proposal.account.votingSessionInterval.start = new Date(proposal.account.votingSessionInterval.start.toString())
+      proposal.account.votingSessionInterval.end = new Date(proposal.account.votingSessionInterval.end.toString())
+      return proposal;
+    })
+    setProposals(readableProposals);
     
 
     // if(wallet && wallet.publicKey){
@@ -71,15 +86,18 @@ export const AppProvider = ({ children }) => {
       console.log(
         stringToU8Array16(title), 
         stringToU8Array32(description),
-        cr_start,
-        cr_end,
-        vr_start,
-        vr_end,
-        vs_start,
-        vs_end,
+        new BN(cr_start),
+        new BN(cr_end),
+        new BN(vr_start),
+        new BN(vr_end),
+        new BN(vs_start),
+        new BN(vs_end),
         proposal.publicKey,
-        wallet
+        wallet,
+        SystemProgram.programId.toString()
       )
+      // const proposalTitle = stringToU8Array16("title test");
+      // const proposalDesc = stringToU8Array32("desc test");
       const txHash = await program.methods
         .createProposal(
           stringToU8Array16(title), 
@@ -93,10 +111,10 @@ export const AppProvider = ({ children }) => {
         )
         .accounts({
           proposal: proposal.publicKey,
-          signer: wallet.publicKey,
+          admin: wallet.publicKey,
           systemProgram: SystemProgram.programId,
         })
-        .signers([wallet, proposal])
+        .signers([proposal])
         .rpc();
         console.log(`tx: ${txHash}`)
       await confirmTx(txHash, connection);

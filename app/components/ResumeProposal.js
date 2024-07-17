@@ -1,8 +1,8 @@
 const ResumeProposal = ({pubkey}) => {
-
+  
   return (
     <div>
-      pubkey de la Proposition: {pubkey}
+      <span>pubkey de la Proposition: {pubkey}</span>
     </div>
   );
 }

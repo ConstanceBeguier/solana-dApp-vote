@@ -5,7 +5,7 @@ import Link from 'next/link';
 const ViewProposals = () => {
 
   const {proposals} = useAppContext();
-
+  console.log(proposals)
   return (
     <div>
       {proposals?.map((proposal) => (
