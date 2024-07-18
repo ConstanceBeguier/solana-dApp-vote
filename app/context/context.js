@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useContext, useMemo } from "react";
 import { SystemProgram, Keypair, PublicKey } from "@solana/web3.js";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { BN } from "bn.js";
+import moment from 'moment';
 
 import {
   getProgram,
@@ -37,20 +38,30 @@ export const AppProvider = ({ children }) => {
     const proposals = await program.account.proposal.all();
     // const sortedVotes = proposals.sort((a, b) => a.account.deadline - b.account.deadline);
     const readableProposals = proposals.map(proposal => {
-      console.log(proposal)
-      proposal.publicKey = proposal.publicKey
-      console.log(proposal.account.title)
-      console.log(u8ArrayToString(proposal.account.title))
-      proposal.account.admin = u8ArrayToString(proposal.account.admin)
-      proposal.account.title = u8ArrayToString(proposal.account.title)
-      proposal.account.description = u8ArrayToString(proposal.account.description)
-      proposal.account.choicesRegistrationInterval.start = new Date(proposal.account.choicesRegistrationInterval.start.toString())
-      proposal.account.choicesRegistrationInterval.end = new Date(proposal.account.choicesRegistrationInterval.end.toString())
-      proposal.account.votersRegistrationInterval.start = new Date(proposal.account.votersRegistrationInterval.start.toString())
-      proposal.account.votersRegistrationInterval.end = new Date(proposal.account.votersRegistrationInterval.end.toString())
-      proposal.account.votingSessionInterval.start = new Date(proposal.account.votingSessionInterval.start.toString())
-      proposal.account.votingSessionInterval.end = new Date(proposal.account.votingSessionInterval.end.toString())
-      return proposal;
+      const tmpProposal = {
+        publicKey: '',
+        account: {
+          admin: '',
+          title: '',
+          description: '',
+          choicesRegistrationInterval: {start:'', end:''},
+          votersRegistrationInterval: {start:'', end:''},
+          votingSessionInterval: {start:'', end:''},
+        },
+      };
+
+      tmpProposal.publicKey = proposal.publicKey.toString();
+      tmpProposal.account.admin = proposal.account.admin.toString();
+      tmpProposal.account.title = u8ArrayToString(proposal.account.title);
+      tmpProposal.account.description = u8ArrayToString(proposal.account.description);
+      tmpProposal.account.choicesRegistrationInterval.start = moment(Number(proposal.account.choicesRegistrationInterval.start));
+      tmpProposal.account.choicesRegistrationInterval.end = moment(Number(proposal.account.choicesRegistrationInterval.end));
+      tmpProposal.account.votersRegistrationInterval.start = moment(Number(proposal.account.votersRegistrationInterval.start));
+      tmpProposal.account.votersRegistrationInterval.end = moment(Number(proposal.account.votersRegistrationInterval.end));
+      tmpProposal.account.votingSessionInterval.start = moment(Number(proposal.account.votingSessionInterval.start));
+      tmpProposal.account.votingSessionInterval.end = moment(Number(proposal.account.votingSessionInterval.end));
+
+      return tmpProposal;
     })
     setProposals(readableProposals);
     
