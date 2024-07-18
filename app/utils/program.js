@@ -14,10 +14,10 @@ export const getProgram = (connection, wallet) => {
   return program;
 };
 
-export const getVoterAddress = async (votePublicKey, userPublicKey) => {
+export const getBallotAddress = async (proposalPublicKey, userPublicKey) => {
   return (
     await PublicKey.findProgramAddress(
-      [votePublicKey.toBuffer(), userPublicKey.toBuffer()],
+      [proposalPublicKey.toBuffer(), userPublicKey.toBuffer()],
       PROGRAM_ID
     )
   )[0];

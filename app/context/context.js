@@ -1,11 +1,11 @@
 import { createContext, useState, useEffect, useContext, useMemo } from "react";
-import { SystemProgram, Keypair } from "@solana/web3.js";
+import { SystemProgram, Keypair, PublicKey } from "@solana/web3.js";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { BN } from "bn.js";
 
 import {
   getProgram,
-  getVoterAddress
+  getProposalAddress
 } from "../utils/program";
 import { confirmTx, mockWallet, stringToU8Array16, stringToU8Array32, u8ArrayToString } from "../utils/helper";
 
@@ -149,11 +149,11 @@ export const AppProvider = ({ children }) => {
       setError(err.message);
     }
   };
-  const register_voter = async (proposalPK) => {    
+  const register_voter = async (voter, proposalPK) => {    
     setError("");
     setSuccess("");
     try {
-      const ppAccountAddress = await getProposalAddress(proposalPK, wallet.publicKey);
+      const ppAccountAddress = await getProposalAddress(new PublicKey(proposalPK), new PublicKey(voter));
 
       const txHash = await program.methods
         .registerVoter()

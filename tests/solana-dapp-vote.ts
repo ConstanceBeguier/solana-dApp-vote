@@ -4,6 +4,7 @@ import {SolanaDappVote} from "../target/types/solana_dapp_vote";
 import {Connection, PublicKey, Keypair} from '@solana/web3.js';
 import * as assert from 'assert';
 import BN from 'bn.js';
+import console from "console";
 
 function stringToU8Array16(input: string): [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number] {
     const bytes = new TextEncoder().encode(input);
@@ -91,8 +92,12 @@ describe("solana-dapp-vote", () => {
         //  Create a proposal
         const proposal = Keypair.generate();
         console.log(`Proposal pubkey: `, proposal.publicKey.toBase58());
+        console.log(`systemProgram id: `, anchor.web3.SystemProgram.programId.toString());
+
         const proposalTitle = stringToU8Array16("title test");
+        console.log(proposalTitle)
         const proposalDesc = stringToU8Array32("desc test");
+        console.log(proposalTitle)
         let txCreateProposal = await program.methods
             .createProposal(proposalTitle, proposalDesc, new BN(0), new BN(1), new BN(1), new BN(2), new BN(2), new BN(3))
             .accounts({

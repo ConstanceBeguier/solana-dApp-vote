@@ -7,7 +7,9 @@ const Header = () => {
 
   return (
     <div className={style.wrapper}>
-      <div className={style.title}>DAO Vote App</div>
+      <Link href="/">
+        <div className={style.title}>DAO Vote App</div>
+      </Link>
       <nav className={style.nav}>
       <Link href="/">
         <a>Accueil</a>
