@@ -13,6 +13,7 @@ const AddChoice = () => {
     const createProposal = () => {
         add_choice_for_one_proposal(
             choice,
+            proposalPK
         );
     };
   
@@ -24,7 +25,7 @@ const AddChoice = () => {
           type="text"
           id="choice"
           value={choice}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => setChoice(e.target.value)}
         />
 
         <a className={style.button} onClick={createProposal}>

@@ -6,11 +6,13 @@ import { isValidPublicKey } from "../../utils/helper";
 const AddVoter = () => {
     const router = useRouter();
     const { proposalPK } = router.query; // Accéder aux paramètres de requête
-  
-    const { register_voter } = useAppContext();
+    const { isCo, proposals, register_voter } = useAppContext();
     const [voter, setVoter] = useState('');
     const [error, setError] = useState('');
-  
+    useEffect(()=>{
+      const currentPP = proposals.find((pp)=>pp.publicKey == id);
+      setProposal(currentPP);
+    }, [id,proposals, isCo]);
     const registerVoter = () => {
       if(isValidPublicKey(voter)){
         register_voter(

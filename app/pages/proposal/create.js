@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAppContext } from "../../context/context";
 import style from '../../styles/Proposal.module.css';
-
+import { useRouter } from 'next/router';
 const CreateProposal = () => {
+  const router = useRouter();
   const { create_proposal } = useAppContext();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -13,17 +14,20 @@ const CreateProposal = () => {
   const [dateVSStart, setDateVSStart] = useState('');
   const [dateVSEnd, setDateVSEnd] = useState('');
 
-  const createProposal = () => {
-    create_proposal(
+  const createProposal =async () => {
+    const createdProposal = await create_proposal(
       title,
       description, 
-      new Date(dateCRStart).getTime(),
-      new Date(dateCREnd).getTime(),
-      new Date(dateVRStart).getTime(),
-      new Date(dateVREnd).getTime(),
-      new Date(dateVSStart).getTime(),
-      new Date(dateVSEnd).getTime(),
+      new Date(dateCRStart).getTime() / 1000,
+      new Date(dateCREnd).getTime() / 1000,
+      new Date(dateVRStart).getTime() / 1000,
+      new Date(dateVREnd).getTime() / 1000,
+      new Date(dateVSStart).getTime() / 1000,
+      new Date(dateVSEnd).getTime() / 1000,
     );
+    if(createdProposal){
+      router.push(`/proposal/${createdProposal.publicKey}`);
+    }
   };
 
   return (
@@ -51,7 +55,7 @@ const CreateProposal = () => {
         <div>
           <span className={style.group_label}>start</span>
           <input
-            type="date"
+            type="datetime-local"
             id="date-input-cr-start"
             className={style.input}
             value={dateCRStart}
@@ -61,7 +65,7 @@ const CreateProposal = () => {
         <div>
           <span className={style.group_label}>end</span>
           <input
-            type="date"
+            type="datetime-local"
             id="date-input-cr-end"
             className={style.input}
             value={dateCREnd}
@@ -75,7 +79,7 @@ const CreateProposal = () => {
         <div>
           <span className={style.group_label}>start</span>
           <input
-            type="date"
+            type="datetime-local"
             id="date-input-vr-start"
             className={style.input}
             value={dateVRStart}
@@ -85,7 +89,7 @@ const CreateProposal = () => {
         <div>
           <span className={style.group_label}>end</span>
           <input
-            type="date"
+            type="datetime-local"
             id="date-input-vr-end"
             className={style.input}
             value={dateVREnd}
@@ -99,7 +103,7 @@ const CreateProposal = () => {
         <div>
           <span className={style.group_label}>start</span>
           <input
-            type="date"
+            type="datetime-local"
             id="date-input-vs-start"
             className={style.input}
             value={dateVSStart}
@@ -109,7 +113,7 @@ const CreateProposal = () => {
         <div>
           <span className={style.group_label}>end</span>
           <input
-            type="date"
+            type="datetime-local"
             id="date-input-vs-end"
             className={style.input}
             value={dateVSEnd}
