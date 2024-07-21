@@ -42,7 +42,6 @@ describe.skip("functional testing", () => {
 
     const program = anchor.workspace.SolanaDappVote as Program<SolanaDappVote>;
     const connection = new Connection('http://127.0.0.1:8899', 'confirmed');
-    const programID = new PublicKey("5ohdRX4CdPL3vezowNBNiv6szq7tKg9jMDzK8KRRmvkM");
 
     it("Full workflow", async () => {
         // Create proposal keypair
@@ -133,17 +132,17 @@ describe.skip("functional testing", () => {
         // Register voter0
         const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
             [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-            programID
+            program.programId
         );
         let txRegisterVoter0 = await program.methods
-            .registerVoter()
+            .registerVoter(voter0.publicKey)
             .accounts({
                 proposal: proposal.publicKey,
                 ballot: ballot0AccountAddr,
-                voter: voter0.publicKey,
+                admin: admin.publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
-            .signers([voter0])
+            .signers([admin])
             .rpc();
         // console.log(`Use 'solana confirm -v ${txRegisterVoter0}' to see the logs`);
         await connection.confirmTransaction(txRegisterVoter0);
@@ -151,17 +150,17 @@ describe.skip("functional testing", () => {
         //  Register voter1
         const [ballot1AccountAddr, bump1] = await PublicKey.findProgramAddress(
             [proposal.publicKey.toBuffer(), voter1.publicKey.toBuffer()],
-            programID
+            program.programId
         );
         let txRegisterVoter1 = await program.methods
-            .registerVoter()
+            .registerVoter(voter1.publicKey)
             .accounts({
                 proposal: proposal.publicKey,
                 ballot: ballot1AccountAddr,
-                voter: voter1.publicKey,
+                admin: admin.publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
-            .signers([voter1])
+            .signers([admin])
             .rpc();
         // console.log(`Use 'solana confirm -v ${txRegisterVoter1}' to see the logs`);
         await connection.confirmTransaction(txRegisterVoter1);
