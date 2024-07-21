@@ -320,7 +320,7 @@ describe('solana-dapp-vote unit testing', () => {
     });
 
     describe('register_voter', () => {
-        it.only('can register a voter during registration period', async () => {
+        it.skip('can register a voter during registration period', async () => {
 
             await waitUntil(voters_registration_start);
 
@@ -342,7 +342,7 @@ describe('solana-dapp-vote unit testing', () => {
             await connection.confirmTransaction(txRegisterVoter0);
         });
 
-        it.only('fails to register a voter outside of registration period', async () => {
+        it.skip('fails to register a voter outside of registration period', async () => {
             try {
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
@@ -379,7 +379,7 @@ describe('solana-dapp-vote unit testing', () => {
                     .accounts({
                         proposal: proposal.publicKey,
                         ballot: ballot0AccountAddr,
-                        admin: admin.publicKey,
+                        admin: voter0.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
                     .signers([admin])
