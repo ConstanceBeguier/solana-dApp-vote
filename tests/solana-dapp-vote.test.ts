@@ -320,7 +320,7 @@ describe('solana-dapp-vote unit testing', () => {
     });
 
     describe('register_voter', () => {
-        it.skip('can register a voter during registration period', async () => {
+        it.only('can register a voter during registration period', async () => {
 
             await waitUntil(voters_registration_start);
 
@@ -336,13 +336,13 @@ describe('solana-dapp-vote unit testing', () => {
                     admin: admin.publicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
-                .signers([voter0])
+                .signers([admin])
                 .rpc();
             
             await connection.confirmTransaction(txRegisterVoter0);
         });
 
-        it('fails to register a voter outside of registration period', async () => {
+        it.only('fails to register a voter outside of registration period', async () => {
             try {
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
@@ -356,13 +356,14 @@ describe('solana-dapp-vote unit testing', () => {
                         admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
-                    .signers([voter0])
+                    .signers([admin])
                     .rpc();
                 
                 await connection.confirmTransaction(txRegisterVoter0);
 
             } catch (error) {
                 expect(error).to.be.an('error');
+                console.log((error as Error).message);
                 expect((error as Error).message).to.include("Voters registration is closed");
             }
         });
@@ -381,7 +382,7 @@ describe('solana-dapp-vote unit testing', () => {
                         admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
-                    .signers([voter0])
+                    .signers([admin])
                     .rpc();
                 
                 await connection.confirmTransaction(txRegisterVoter0);
@@ -410,7 +411,7 @@ describe('solana-dapp-vote unit testing', () => {
                     admin: admin.publicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
-                .signers([voter0])
+                .signers([admin])
                 .rpc();
             
             await connection.confirmTransaction(txRegisterVoter0);
@@ -448,7 +449,7 @@ describe('solana-dapp-vote unit testing', () => {
                         admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
-                    .signers([voter0])
+                    .signers([admin])
                     .rpc();
                 
                 await connection.confirmTransaction(txRegisterVoter0);
