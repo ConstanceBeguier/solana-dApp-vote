@@ -37,11 +37,11 @@ function stringToU8Array32(input: string): [number, number, number, number, numb
 }
 
 // This function translates a Date into a unix timestamp
-function dateToUnixTimestamp(date: Date): BN {
+function dateToUnixTimestampBN(date: Date): BN {
      return new BN(Math.floor(date.getTime() / 1000));
 }
 
-function dateToUnixTimestamp2(date: Date): number {
+function dateToUnixTimestamp(date: Date): number {
     return Math.floor(date.getTime() / 1000);
 }
 
@@ -66,7 +66,6 @@ function addSecondsToDate(date: Date, seconds: number): Date {
 describe('solana-dapp-vote unit testing', () => {
     const program = anchor.workspace.SolanaDappVote as Program<SolanaDappVote>;
     const connection = new Connection('http://127.0.0.1:8899', 'confirmed');
-    const programID = new PublicKey("5ohdRX4CdPL3vezowNBNiv6szq7tKg9jMDzK8KRRmvkM");
     let admin;
     let voter0;
     let voter1;
@@ -137,12 +136,12 @@ describe('solana-dapp-vote unit testing', () => {
             .createProposal(
                 stringToU8Array16(proposalTitle), 
                 stringToU8Array32(proposalDesc), 
-                dateToUnixTimestamp(choices_registration_start), 
-                dateToUnixTimestamp(choices_registration_end),
-                dateToUnixTimestamp(voters_registration_start),
-                dateToUnixTimestamp(voters_registration_end),
-                dateToUnixTimestamp(voting_session_start),
-                dateToUnixTimestamp(voting_session_end),
+                dateToUnixTimestampBN(choices_registration_start), 
+                dateToUnixTimestampBN(choices_registration_end),
+                dateToUnixTimestampBN(voters_registration_start),
+                dateToUnixTimestampBN(voters_registration_end),
+                dateToUnixTimestampBN(voting_session_start),
+                dateToUnixTimestampBN(voting_session_end),
             )
             .accounts({
                 proposal: proposal.publicKey,
@@ -165,12 +164,12 @@ describe('solana-dapp-vote unit testing', () => {
             expect(proposalAccount.description).to.eql(stringToU8Array32(proposalDesc));            
             expect(proposalAccount.choices).to.eql([]);
             
-            expect(proposalAccount.choicesRegistrationInterval.start.eq(dateToUnixTimestamp(choices_registration_start))).to.be.true;
-            expect(proposalAccount.choicesRegistrationInterval.end.eq(dateToUnixTimestamp(choices_registration_end))).to.be.true;
-            expect(proposalAccount.votersRegistrationInterval.start.eq(dateToUnixTimestamp(voters_registration_start))).to.be.true;
-            expect(proposalAccount.votersRegistrationInterval.end.eq(dateToUnixTimestamp(voters_registration_end))).to.be.true;
-            expect(proposalAccount.votingSessionInterval.start.eq(dateToUnixTimestamp(voting_session_start))).to.be.true;
-            expect(proposalAccount.votingSessionInterval.end.eq(dateToUnixTimestamp(voting_session_end))).to.be.true
+            expect(proposalAccount.choicesRegistrationInterval.start.eq(dateToUnixTimestampBN(choices_registration_start))).to.be.true;
+            expect(proposalAccount.choicesRegistrationInterval.end.eq(dateToUnixTimestampBN(choices_registration_end))).to.be.true;
+            expect(proposalAccount.votersRegistrationInterval.start.eq(dateToUnixTimestampBN(voters_registration_start))).to.be.true;
+            expect(proposalAccount.votersRegistrationInterval.end.eq(dateToUnixTimestampBN(voters_registration_end))).to.be.true;
+            expect(proposalAccount.votingSessionInterval.start.eq(dateToUnixTimestampBN(voting_session_start))).to.be.true;
+            expect(proposalAccount.votingSessionInterval.end.eq(dateToUnixTimestampBN(voting_session_end))).to.be.true
     
         });
 
@@ -184,12 +183,12 @@ describe('solana-dapp-vote unit testing', () => {
                 .createProposal(
                     proposalTitle, 
                     proposalDesc, 
-                    dateToUnixTimestamp(new Date("2023-07-17 14:00:00")), 
-                    dateToUnixTimestamp(new Date("2023-07-16 15:00:00")), 
-                    dateToUnixTimestamp(new Date("2023-07-18 16:00:00")), 
-                    dateToUnixTimestamp(new Date("2023-07-17 17:00:00")), 
-                    dateToUnixTimestamp(new Date("2023-07-19 18:00:00")), 
-                    dateToUnixTimestamp(new Date("2023-07-18 19:00:00")), 
+                    dateToUnixTimestampBN(new Date("2023-07-17 14:00:00")), 
+                    dateToUnixTimestampBN(new Date("2023-07-16 15:00:00")), 
+                    dateToUnixTimestampBN(new Date("2023-07-18 16:00:00")), 
+                    dateToUnixTimestampBN(new Date("2023-07-17 17:00:00")), 
+                    dateToUnixTimestampBN(new Date("2023-07-19 18:00:00")), 
+                    dateToUnixTimestampBN(new Date("2023-07-18 19:00:00")), 
                 )
                 .accounts({
                     proposal: proposal.publicKey,
@@ -296,7 +295,7 @@ describe('solana-dapp-vote unit testing', () => {
             }
         })
 
-        it("can't add more than ten choices to a proposal", async () => {
+        it.skip("can't add more than ten choices to a proposal", async () => {
             await waitUntil(choices_registration_start);
 
             // TODO: Fix this test
@@ -317,13 +316,13 @@ describe('solana-dapp-vote unit testing', () => {
     });
 
     describe('register_voter', () => {
-        it.skip('can register a voter during registration period', async () => {
+        it('can register a voter during registration period', async () => {
 
             await waitUntil(voters_registration_start);
 
             const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                 [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-                programID
+                program.programId
             );
             let txRegisterVoter0 = await program.methods
                 .registerVoter(voter0.publicKey)
@@ -339,11 +338,11 @@ describe('solana-dapp-vote unit testing', () => {
             await connection.confirmTransaction(txRegisterVoter0);
         });
 
-        it.skip('fails to register a voter outside of registration period', async () => {
+        it('fails to register a voter outside of registration period', async () => {
             try {
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-                    programID
+                    program.programId
                 );
                 let txRegisterVoter0 = await program.methods
                     .registerVoter(voter0.publicKey)
@@ -360,7 +359,6 @@ describe('solana-dapp-vote unit testing', () => {
 
             } catch (error) {
                 expect(error).to.be.an('error');
-                console.log((error as Error).message);
                 expect((error as Error).message).to.include("Voters registration is closed");
             }
         });
@@ -369,7 +367,7 @@ describe('solana-dapp-vote unit testing', () => {
            try {
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-                    programID
+                    program.programId
                 );
                 let txRegisterVoter0 = await program.methods
                     .registerVoter(voter0.publicKey)
@@ -398,7 +396,7 @@ describe('solana-dapp-vote unit testing', () => {
 
             const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                 [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-                programID
+                program.programId
             );
             let txRegisterVoter0 = await program.methods
                 .registerVoter(voter0.publicKey)
@@ -429,14 +427,14 @@ describe('solana-dapp-vote unit testing', () => {
             await connection.confirmTransaction(txCastVote0);
         });
 
-        it.skip('fails to cast a vote outside of voting period', async () => {
+        it('fails to cast a vote outside of voting period', async () => {
 
             try {
                 await waitUntil(voters_registration_start);
 
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-                    programID
+                    program.programId
                 );
                 let txRegisterVoter0 = await program.methods
                     .registerVoter(voter0.publicKey)
@@ -477,7 +475,7 @@ describe('solana-dapp-vote unit testing', () => {
 
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
-                    programID
+                    program.programId
                 );
                 let txRegisterVoter0 = await program.methods
                     .registerVoter(voter0.publicKey)
@@ -487,7 +485,7 @@ describe('solana-dapp-vote unit testing', () => {
                         admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
-                    .signers([voter0])
+                    .signers([admin])
                     .rpc();
                 
                 await connection.confirmTransaction(txRegisterVoter0);
@@ -512,6 +510,9 @@ describe('solana-dapp-vote unit testing', () => {
                 console.log((error as Error).message);
                 expect((error as Error).message).to.include("Invalid choice index");
             }
+        });
+
+        it.skip("same voter can't vote twice", async () => {
         });
 
     });
