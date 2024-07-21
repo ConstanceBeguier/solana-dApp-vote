@@ -41,6 +41,10 @@ function dateToUnixTimestamp(date: Date): BN {
      return new BN(Math.floor(date.getTime() / 1000));
 }
 
+function dateToUnixTimestamp2(date: Date): number {
+    return Math.floor(date.getTime() / 1000);
+}
+
 // Implement a function that wait until a specific date and time
 function waitUntil(date: Date): Promise<void> {
     return new Promise((resolve) => {
@@ -48,7 +52,7 @@ function waitUntil(date: Date): Promise<void> {
         if (date <= now) {
             resolve();
         } else {
-            setTimeout(() => resolve(), (date.getTime() - now.getTime()) + 100);
+            setTimeout(() => resolve(), (date.getTime() - now.getTime()) + 2000);
         }
     });
 }
@@ -208,14 +212,9 @@ describe('solana-dapp-vote unit testing', () => {
     // 2. add_choice_for_one_proposal tests
     describe('add_choice_for_one_proposal', () => {
 
-        it.skip('it will add a choice to an existing proposal', async () => {
+        it('it will add a choice to an existing proposal', async () => {
 
-            // TODO: Fix this test
-
-            console.log("choices_registration_start: ", choices_registration_start);
-            console.log("choices_registration_end: ", choices_registration_end);
             await waitUntil(choices_registration_start);
-            console.log("Now: ", new Date());
 
             const choice0 = stringToU8Array16("choice0");
             let txChoice0 = await program.methods
@@ -229,10 +228,8 @@ describe('solana-dapp-vote unit testing', () => {
 
             await connection.confirmTransaction(txChoice0);
 
-            /*
             const proposalAccount = await program.account.proposal.fetch(proposal.publicKey);           
-            expect(proposalAccount.choices).to.eql([]);
-            */
+            expect(proposalAccount.choices[0].count).to.eql(0);
         });
 
         it('it fails to add a choice to an existing proposal because registration is not opened', async () => {
