@@ -12,6 +12,16 @@ pub fn add_choice_for_one_proposal(
 
     if CHECK_TIMEINTERVALS {
         let now = Clock::get()?.unix_timestamp as u64;
+
+        /*
+        msg!("Now: {}", now);
+        msg!(
+        "Choices registration interval: {} - {}",
+        proposal_account.choices_registration_interval.start,
+        proposal_account.choices_registration_interval.end,
+        );
+        */
+        
         require!(
             proposal_account.choices_registration_interval.start < now
                 && now < proposal_account.choices_registration_interval.end,
