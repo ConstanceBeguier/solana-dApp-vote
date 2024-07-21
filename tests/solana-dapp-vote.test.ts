@@ -329,11 +329,11 @@ describe('solana-dapp-vote unit testing', () => {
                 programID
             );
             let txRegisterVoter0 = await program.methods
-                .registerVoter()
+                .registerVoter(voter0.publicKey)
                 .accounts({
                     proposal: proposal.publicKey,
                     ballot: ballot0AccountAddr,
-                    voter: voter0.publicKey,
+                    admin: admin.publicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
                 .signers([voter0])
@@ -349,11 +349,11 @@ describe('solana-dapp-vote unit testing', () => {
                     programID
                 );
                 let txRegisterVoter0 = await program.methods
-                    .registerVoter()
+                    .registerVoter(voter0.publicKey)
                     .accounts({
                         proposal: proposal.publicKey,
                         ballot: ballot0AccountAddr,
-                        voter: voter0.publicKey,
+                        admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
                     .signers([voter0])
@@ -374,11 +374,11 @@ describe('solana-dapp-vote unit testing', () => {
                     programID
                 );
                 let txRegisterVoter0 = await program.methods
-                    .registerVoter()
+                    .registerVoter(voter0.publicKey)
                     .accounts({
                         proposal: proposal.publicKey,
                         ballot: ballot0AccountAddr,
-                        voter: voter1.publicKey,
+                        admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
                     .signers([voter0])
@@ -403,11 +403,11 @@ describe('solana-dapp-vote unit testing', () => {
                 programID
             );
             let txRegisterVoter0 = await program.methods
-                .registerVoter()
+                .registerVoter(voter0.publicKey)
                 .accounts({
                     proposal: proposal.publicKey,
                     ballot: ballot0AccountAddr,
-                    voter: voter0.publicKey,
+                    admin: admin.publicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
                 .signers([voter0])
@@ -441,11 +441,11 @@ describe('solana-dapp-vote unit testing', () => {
                     programID
                 );
                 let txRegisterVoter0 = await program.methods
-                    .registerVoter()
+                    .registerVoter(voter0.publicKey)
                     .accounts({
                         proposal: proposal.publicKey,
                         ballot: ballot0AccountAddr,
-                        voter: voter0.publicKey,
+                        admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
                     .signers([voter0])
@@ -482,11 +482,11 @@ describe('solana-dapp-vote unit testing', () => {
                     programID
                 );
                 let txRegisterVoter0 = await program.methods
-                    .registerVoter()
+                    .registerVoter(voter0.publicKey)
                     .accounts({
                         proposal: proposal.publicKey,
                         ballot: ballot0AccountAddr,
-                        voter: voter0.publicKey,
+                        admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
                     .signers([voter0])
