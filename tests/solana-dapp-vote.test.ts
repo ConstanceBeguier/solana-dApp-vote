@@ -204,6 +204,57 @@ describe('solana-dapp-vote unit testing', () => {
             }
 
         });
+
+        it(`fails to create two proposals with the same pubkey`, async () => {
+            proposal = Keypair.generate();
+            proposalTitle = stringToU8Array16("title test");
+            proposalDesc = stringToU8Array32("desc test");
+
+            try {
+                await program.methods
+                .createProposal(
+                    proposalTitle, 
+                    proposalDesc, 
+                    dateToUnixTimestampBN(new Date("2024-07-23 14:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-23 15:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-23 16:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-23 17:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-23 18:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-23 19:00:00")), 
+                )
+                .accounts({
+                    proposal: proposal.publicKey,
+                    admin: admin.publicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                })
+                .signers([admin, proposal])
+                .rpc();
+
+                await program.methods
+                .createProposal(
+                    proposalTitle, 
+                    proposalDesc, 
+                    dateToUnixTimestampBN(new Date("2024-07-24 14:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-24 15:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-24 16:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-24 17:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-24 18:00:00")), 
+                    dateToUnixTimestampBN(new Date("2024-07-24 19:00:00")), 
+                )
+                .accounts({
+                    proposal: proposal.publicKey,
+                    admin: admin.publicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                })
+                .signers([admin, proposal])
+                .rpc();
+
+                throw new Error("The transaction should have failed");
+            }
+            catch (error) {
+                expect((error as Error).message).to.include("Simulation failed");
+            }   
+        });
     });
 
     describe('add_choice_for_one_proposal', () => {
@@ -338,6 +389,29 @@ describe('solana-dapp-vote unit testing', () => {
                 expect((error as Error).message).to.include("Too many choices for this proposal");
             }
         });
+
+        it("can add up to 10 choices to a proposal", async () => {
+            await waitUntil(choices_registration_start);
+
+            try {
+                for (let i = 0; i < 10; i++) {
+                    const choice = stringToU8Array16(i.toString());
+                    let txChoice = await program.methods
+                        .addChoiceForOneProposal(choice)
+                        .accounts({
+                            proposal: proposal.publicKey,
+                            admin: admin.publicKey,
+                        })
+                        .signers([admin])
+                        .rpc();
+
+                    await connection.confirmTransaction(txChoice);
+                }
+            } catch (error) {
+                expect(error).to.be.an('error');
+                expect((error as Error).message).to.include("Too many choices for this proposal");
+            }
+        });
     });
 
     describe('register_voter', () => {
@@ -386,6 +460,74 @@ describe('solana-dapp-vote unit testing', () => {
                 expect(error).to.be.an('error');
                 expect((error as Error).message).to.include("Voters registration is closed");
             }
+        });
+
+        it('fails to register a voter for a non existing proposal', async () => {
+            try {
+                await waitUntil(voters_registration_start);
+                proposal = Keypair.generate();
+                const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
+                    [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
+                    program.programId
+                );
+                let txRegisterVoter0 = await program.methods
+                    .registerVoter(voter0.publicKey)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        admin: admin.publicKey,
+                        systemProgram: anchor.web3.SystemProgram.programId,
+                    })
+                    .signers([admin])
+                    .rpc();
+                
+                await connection.confirmTransaction(txRegisterVoter0);
+
+            } catch (error) {
+                expect(error).to.be.an('error');
+                expect((error as Error).message).to.include("The program expected this account to be already initialized");
+            }
+        });
+
+        it('fails to register a voter twice on the same proposal', async () => {
+
+            try {
+                await waitUntil(voters_registration_start);
+
+                const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
+                    [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
+                    program.programId
+                );
+                let txRegisterVoter0 = await program.methods
+                    .registerVoter(voter0.publicKey)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        admin: admin.publicKey,
+                        systemProgram: anchor.web3.SystemProgram.programId,
+                    })
+                    .signers([admin])
+                    .rpc();
+                
+                await connection.confirmTransaction(txRegisterVoter0);
+
+                let txRegisterVoter1 = await program.methods
+                    .registerVoter(voter0.publicKey)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        admin: admin.publicKey,
+                        systemProgram: anchor.web3.SystemProgram.programId,
+                    })
+                    .signers([admin])
+                    .rpc();
+                
+                await connection.confirmTransaction(txRegisterVoter1);
+
+            } catch (error) {
+                expect((error as Error).message).to.include("Simulation failed");
+            }
+
         });
 
         it('only allows admin to register a voter', async () => {
@@ -633,6 +775,60 @@ describe('solana-dapp-vote unit testing', () => {
                 expect(error).to.be.an('error');
                 expect((error as Error).message).to.include("Already voted");
             }
+        });
+
+        it('should fail if the voter is not registered', async () => {
+
+            try {
+                await waitUntil(choices_registration_start);
+                const choice0 = stringToU8Array16("choice0");
+                let txChoice0 = await program.methods
+                    .addChoiceForOneProposal(choice0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        admin: admin.publicKey,
+                    })
+                    .signers([admin])
+                    .rpc();
+
+                await connection.confirmTransaction(txChoice0);
+
+                await waitUntil(voters_registration_start);
+                const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
+                    [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
+                    program.programId
+                );
+
+                await waitUntil(voting_session_start);
+                let txCastVote0 = await program.methods
+                    .castVote(0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        voter: voter0.publicKey,
+                    })
+                    .signers([voter0])
+                    .rpc();
+                    
+                await connection.confirmTransaction(txCastVote0);
+
+                let txCastVote1 = await program.methods
+                    .castVote(0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        voter: voter0.publicKey,
+                    })
+                    .signers([voter0])
+                    .rpc();
+                    
+                await connection.confirmTransaction(txCastVote1);
+
+            } catch (error) {
+                expect(error).to.be.an('error');
+                expect((error as Error).message).to.include("The program expected this account to be already initialized");
+            }
+
         });
 
     });
