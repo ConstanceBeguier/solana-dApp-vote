@@ -45,8 +45,8 @@ pub mod solana_dapp_vote {
         instructions::add_choice_for_one_proposal(ctx, choice)
     }
 
-    pub fn register_voter(ctx: Context<RegisterVoter>) -> Result<()> {
-        instructions::register_voter(ctx)
+    pub fn register_voter(ctx: Context<RegisterVoter>, voter_pubkey: Pubkey) -> Result<()> {
+        instructions::register_voter(ctx, voter_pubkey)
     }
 
     pub fn cast_vote(ctx: Context<CastVote>, choice_index: u8) -> Result<()> {

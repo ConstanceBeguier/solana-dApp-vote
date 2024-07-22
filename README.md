@@ -11,15 +11,16 @@ period,
 a voting session is divided into three non-overlapping periods:
 
 1. **Choice Registration Period:** The administrator can add choices to a proposal.
-2. **Voter Registration Period:** Voters can register to participate in the proposal.
+2. **Voter Registration Period:** Administrator can register voters to participate in the proposal.
 3. **Voting Period:** Registered voters can cast their votes.
 
 ## Features
 
-- **Create Proposal:** Administrators can create proposals with a title, description, and defined time periods for
+- **Create Proposal:** Administrator can create proposals with a title, description, and defined time periods for
   choice registration, voter registration, and voting.
-- **Add Choices:** Administrators can add choices to an existing proposal during the choice registration period.
-- **Register Voters:** Voters can register to participate in a proposal during the voter registration period.
+- **Add Choices:** Administrator can add choices to an existing proposal during the choice registration period.
+- **Register Voters:** Administrator can register a voter to participate in a proposal during the voter registration
+  period.
 - **Cast Vote:** Registered voters can cast their votes during the voting period.
 
 ## Usage
@@ -34,7 +35,7 @@ To use the platform, follow these steps:
     - During the choice registration period, the administrator can add multiple choices to the proposal.
 
 3. **Register Voters `register_voter`:**
-    - During the voter registration period, interested voters can register to participate in the proposal.
+    - During the voter registration period, administrator can register a voter to participate in the proposal.
 
 4. **Cast Votes `cast_vote`:**
-    - During the voting period, registered voters can cast their votes for their preferred choice in the proposal.
+    - During the voting period, registered voters can cast their vote for their preferred choice in the proposal.
