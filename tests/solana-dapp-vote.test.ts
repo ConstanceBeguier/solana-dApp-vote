@@ -295,23 +295,53 @@ describe('solana-dapp-vote unit testing', () => {
             }
         })
 
-        it.skip("can't add more than ten choices to a proposal", async () => {
+        it("can't add the same choice twice", async () => {
             await waitUntil(choices_registration_start);
 
-            // TODO: Fix this test
-            /*
-            for (let i = 0; i < 10; i++) {
-                const choice = stringToU8Array16(`choice ${i}`);
-                let tx = await program.rpc.addChoiceForOneProposal(choice, {
-                    accounts: {
-                        proposal: proposal.publicKey,
-                        admin: admin.publicKey,
-                    },
-                    signers: [admin],
-                });
-                await connection.confirmTransaction(tx);
+            try {
+                for (let i = 0; i < 2; i++) {
+                    const choice = stringToU8Array16(`choice`);
+                    let txChoice = await program.methods
+                        .addChoiceForOneProposal(choice)
+                        .accounts({
+                            proposal: proposal.publicKey,
+                            admin: admin.publicKey,
+                        })
+                        .signers([admin])
+                        .rpc();
+
+                    await connection.confirmTransaction(txChoice);
+                }
+            } catch (error) {
+                expect(error).to.be.an('error');
+                expect((error as Error).message).to.include("Choice already exists");
             }
-                */
+        });
+
+        it.only("can't add more than 5 choices to a proposal", async () => {
+            await waitUntil(choices_registration_start);
+
+            try {
+                for (let i = 0; i < 5; i++) {
+                    const choice = stringToU8Array16(i.toString());
+                    let txChoice = await program.methods
+                        .addChoiceForOneProposal(choice)
+                        .accounts({
+                            proposal: proposal.publicKey,
+                            admin: admin.publicKey,
+                        })
+                        .signers([admin])
+                        .rpc();
+
+                    await connection.confirmTransaction(txChoice);
+                    console.log(`Choice ${i} added`);
+                }
+            } catch (error) {
+                expect(error).to.be.an('error');
+                console.log((error as Error).message);
+                expect((error as Error).message).to.include("Failed to serialize the account");
+            }
+            console.log("done");
         });
     });
 
