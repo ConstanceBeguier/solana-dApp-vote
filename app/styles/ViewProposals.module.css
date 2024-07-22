@@ -1,0 +1,45 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+  gap: 20px;  
+  padding: 20px;
+}
+
+.proposalContainer {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s linear;
+}
+.proposalContainer:hover .card {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+.proposalContainer:hover {
+  transform: scale(1.01);
+}
+
+.container {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* dynamic class*/
+.choicesRegistration {
+
+}
+.votersRegistration {
+
+}
+.votingSession {
+
+}
+.terminate {
+
+}

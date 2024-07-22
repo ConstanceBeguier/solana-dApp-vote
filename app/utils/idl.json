@@ -1,0 +1,317 @@
+{
+    "version": "0.1.0",
+    "name": "solana_dapp_vote",
+    "instructions": [
+        {
+            "name": "createProposal",
+            "accounts": [
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "admin",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "title",
+                    "type": {
+                        "array": [
+                            "u8",
+                            16
+                        ]
+                    }
+                },
+                {
+                    "name": "description",
+                    "type": {
+                        "array": [
+                            "u8",
+                            32
+                        ]
+                    }
+                },
+                {
+                    "name": "choicesRegistrationStart",
+                    "type": "u64"
+                },
+                {
+                    "name": "choicesRegistrationEnd",
+                    "type": "u64"
+                },
+                {
+                    "name": "votersRegistrationStart",
+                    "type": "u64"
+                },
+                {
+                    "name": "votersRegistrationEnd",
+                    "type": "u64"
+                },
+                {
+                    "name": "votingSessionStart",
+                    "type": "u64"
+                },
+                {
+                    "name": "votingSessionEnd",
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "addChoiceForOneProposal",
+            "accounts": [
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "admin",
+                    "isMut": true,
+                    "isSigner": true
+                }
+            ],
+            "args": [
+                {
+                    "name": "choice",
+                    "type": {
+                        "array": [
+                            "u8",
+                            16
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "registerVoter",
+            "accounts": [
+                {
+                    "name": "proposal",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "ballot",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "admin",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "voterPubkey",
+                    "type": "publicKey"
+                }
+            ]
+        },
+        {
+            "name": "castVote",
+            "accounts": [
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "ballot",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "voter",
+                    "isMut": true,
+                    "isSigner": true
+                }
+            ],
+            "args": [
+                {
+                    "name": "choiceIndex",
+                    "type": "u8"
+                }
+            ]
+        }
+    ],
+    "accounts": [
+        {
+            "name": "Ballot",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "proposal",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "voter",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "choiceIndex",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Proposal",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "admin",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "title",
+                        "type": {
+                            "array": [
+                                "u8",
+                                16
+                            ]
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "type": {
+                            "array": [
+                                "u8",
+                                32
+                            ]
+                        }
+                    },
+                    {
+                        "name": "choices",
+                        "type": {
+                            "vec": {
+                                "defined": "Choice"
+                            }
+                        }
+                    },
+                    {
+                        "name": "choicesRegistrationInterval",
+                        "type": {
+                            "defined": "TimeInterval"
+                        }
+                    },
+                    {
+                        "name": "votersRegistrationInterval",
+                        "type": {
+                            "defined": "TimeInterval"
+                        }
+                    },
+                    {
+                        "name": "votingSessionInterval",
+                        "type": {
+                            "defined": "TimeInterval"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "types": [
+        {
+            "name": "TimeInterval",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "start",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "end",
+                        "type": "u64"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Choice",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "label",
+                        "type": {
+                            "array": [
+                                "u8",
+                                16
+                            ]
+                        }
+                    },
+                    {
+                        "name": "count",
+                        "type": "u16"
+                    }
+                ]
+            }
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "InvalidTimeline",
+            "msg": "Timeline is invalid"
+        },
+        {
+            "code": 6001,
+            "name": "ChoicesRegistrationIsClosed",
+            "msg": "Choices registration is closed"
+        },
+        {
+            "code": 6002,
+            "name": "VotersRegistrationIsClosed",
+            "msg": "Voters registration is closed"
+        },
+        {
+            "code": 6003,
+            "name": "VotingSessionIsClosed",
+            "msg": "Voting session is closed"
+        },
+        {
+            "code": 6004,
+            "name": "MaxCountOfChoicesReached",
+            "msg": "Too many choices for this proposal"
+        },
+        {
+            "code": 6005,
+            "name": "InvalidChoiceIndex",
+            "msg": "Invalid choice index"
+        },
+        {
+            "code": 6006,
+            "name": "AlreadyVoted",
+            "msg": "Already voted"
+        },
+        {
+            "code": 6007,
+            "name": "CountOverflow",
+            "msg": "Too many votes for this choice"
+        },
+        {
+            "code": 6008,
+            "name": "ChoiceAlreadyExists",
+            "msg": "Choice already exists"
+        }
+    ]
+}

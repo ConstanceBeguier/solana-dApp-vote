@@ -1,0 +1,7 @@
+.wrapper {
+  height: 100vh;
+  background-color: #111111;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+}
