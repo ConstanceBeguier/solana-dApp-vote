@@ -14,9 +14,11 @@ const Header = () => {
       <Link href="/">
         <a>Accueil</a>
       </Link>
-      <Link href="/proposal/create">
-        <a>Créer une Proposition</a>
-      </Link>
+      {
+        isCo &&<Link href="/proposal/create">
+          <a>Create a Proposal</a>
+        </Link>
+      }
     </nav>
       {isCo ? <WalletDisconnectButton /> : <WalletModalButton/> }
     </div>
