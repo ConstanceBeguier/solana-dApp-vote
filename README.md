@@ -5,8 +5,6 @@ processes. It allows for the initiation of various voting sessions that are acce
 
 ## 👉️ Information
 
----
-
 - **Developers:** Sébastien Gazeau, Maxime Auburtin, and Constance Beguier
 - **Deployed dApp Frontend:** [Link to Vercel Deployment](https://your-dapp-frontend.vercel.app)
 - **Program Explorer Link:** [Solscan Explorer](https://solscan.io/?cluster=devnet)
@@ -15,9 +13,9 @@ processes. It allows for the initiation of various voting sessions that are acce
   - **Unit Tests:** mocha 9.0.3, chai 4.3.4
   - **Program:** anchor-cli 0.29.0, rustc 1.79.0
 
-## 👉️ Solana Program
-
 ---
+
+## 👉️ Solana Program
 
 ![Unit tests](./resources/program.png)
 
@@ -56,9 +54,13 @@ To use the platform, follow these steps:
 4. **Cast Votes `cast_vote`:**
    - During the voting period, each voter can vote for its choice in a proposal
 
-## 👉️ Unit Testing
+### How to build
+
+> anchor build
 
 ---
+
+## 👉️ Unit Testing
 
 Our smart contract has a unit test coverage above 80%
 
@@ -71,9 +73,9 @@ or:
 > solana-test-validator
 > anchor test --skip-local-validator
 
-## 👉️ Frontend
-
 ---
+
+## 👉️ Frontend
 
 Our frontend has been made with React and web3.js
 
