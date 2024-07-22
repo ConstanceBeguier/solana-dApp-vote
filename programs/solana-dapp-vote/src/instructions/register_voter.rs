@@ -9,11 +9,9 @@ pub fn register_voter(ctx: Context<RegisterVoter>, voter_pubkey: Pubkey) -> Resu
 
     if CHECK_TIMEINTERVALS {
         let now = Clock::get()?.unix_timestamp as u64;
-        require!(
-            ctx.accounts.proposal.voters_registration_interval.start < now
-                && now < ctx.accounts.proposal.voters_registration_interval.end,
-            VoteError::VotersRegistrationIsClosed
-        );
+        if !(ctx.accounts.proposal.voters_registration_interval.start <= now && now <= ctx.accounts.proposal.voters_registration_interval.end) {
+            return Err(VoteError::VotersRegistrationIsClosed.into());
+        }
     }
 
     ballot_account.proposal = ctx.accounts.proposal.key();
