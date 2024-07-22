@@ -89,7 +89,6 @@ export const AppProvider = ({ children }) => {
   const fetch_ballot = async (proposalPK) => {
     const ballotAddress = await getBallotAddress(new PublicKey(proposalPK), wallet.publicKey);
     const ballot = await program.account.ballot.fetch(ballotAddress);
-    console.log(ballot);
     return ballot;
   }
   const create_proposal = async (
@@ -106,19 +105,6 @@ export const AppProvider = ({ children }) => {
     setSuccess("");
     try {
       const proposal = Keypair.generate();
-      console.log(
-        stringToU8Array16(title), 
-        stringToU8Array32(description),
-        cr_start,
-        cr_end,
-        vr_start,
-        vr_end,
-        vs_start,
-        vs_end,
-        proposal.publicKey,
-        wallet,
-        SystemProgram.programId.toString()
-      )
 
       const txHash = await program.methods
         .createProposal(
@@ -138,18 +124,16 @@ export const AppProvider = ({ children }) => {
         })
         .signers([proposal])
         .rpc();
-        console.log(`tx: ${txHash}`)
+
       const confirm = await confirmTx(txHash, connection);
-      console.log('confirm', confirm)
+  
       await fetch_proposals();
       if(confirm) {
         const newProposal = proposals.find(pp=>pp.account.title == title && pp.account.description == description);
-        console.log("newProposal", newProposal)
         return newProposal;
       }
     } catch (err) {
-      console.log("err", err);
-      setError(err.message);
+      setError(err.message.split('Error Message:')[1]);
     }
   };
 
@@ -172,8 +156,7 @@ export const AppProvider = ({ children }) => {
 
       fetch_proposals();
     } catch (err) {
-      console.log("err", err);
-      setError(err.message);
+      setError(err.message.split('Error Message:')[1]);
     }
   };
   const register_voter = async (voter, proposalPK) => {    
@@ -181,8 +164,7 @@ export const AppProvider = ({ children }) => {
     setSuccess("");
     try {
       const ballotAddress = await getBallotAddress(new PublicKey(proposalPK), new PublicKey(voter));
-      console.log('ballotAddress', ballotAddress)
-      console.log('voter', voter  )
+
       const txHash = await program.methods
         .registerVoter(new PublicKey(voter))
         .accounts({
@@ -197,8 +179,7 @@ export const AppProvider = ({ children }) => {
 
       fetch_proposals();
     } catch (err) {
-      console.log("err", err);
-      setError(err.message);
+      setError(err.message.split('Error Message:')[1]);
     }
   };
   const cast_vote = async (index, proposalPK) => {

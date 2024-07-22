@@ -18,7 +18,6 @@ function ProposalDetails() {
   useEffect(()=>{
     const currentPP = proposals.find((pp)=>pp.publicKey == id);
     setProposal(currentPP);
-    console.log(currentPP)
     if(currentPP){
       if(isCo && currentPP?.account?.admin == wallet?.publicKey.toString()){
         setIsAdmin(true);
@@ -39,7 +38,6 @@ function ProposalDetails() {
 
       const ballot = await fetch_ballot(proposal.publicKey);
       if(ballot?.choiceIndex == 255) {
-      console.log(index)
         const voted = cast_vote(index, proposal.publicKey);
       }
     

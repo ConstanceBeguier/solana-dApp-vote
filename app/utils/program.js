@@ -15,8 +15,6 @@ export const getProgram = (connection, wallet) => {
 };
 
 export const getBallotAddress = async (proposalPublicKey, userPublicKey) => {
-  console.log('proposalPublicKey', proposalPublicKey)
-  console.log('userPublicKey', userPublicKey)
   const [publicKey, bump] = PublicKey.findProgramAddressSync(
     [proposalPublicKey.toBuffer(), userPublicKey.toBuffer()],
     PROGRAM_ID

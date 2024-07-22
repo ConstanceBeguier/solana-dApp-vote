@@ -49,3 +49,14 @@
   font-weight: 500;
   color: #333;
 }
+.error {
+  color: red;
+  margin-bottom: 0.5em;
+  display: inline-block;
+}
+.listChoices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}

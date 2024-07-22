@@ -25,6 +25,7 @@ const CreateProposal = () => {
       new Date(dateVSStart).getTime() / 1000,
       new Date(dateVSEnd).getTime() / 1000,
     );
+
     if(createdProposal){
       router.push(`/proposal/${createdProposal.publicKey}`);
     }

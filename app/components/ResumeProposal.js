@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import style from '../styles/ResumeProposal.module.css';
 import { toCamelCase } from "../utils/helper";
 const ResumeProposal = ({publicKey, account, setActiveClass}) => {
-  console.log(publicKey)
   const [period, setPeriod] = useState('');
 
   useEffect(()=>{
