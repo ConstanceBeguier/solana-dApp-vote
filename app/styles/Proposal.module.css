@@ -50,9 +50,14 @@
   color: #333;
 }
 .error, .success {
-  color: red;
   margin-bottom: 0.5em;
   display: inline-block;
+}
+.error {
+  color: red;
+}
+.succes {
+  color: green;
 }
 .listChoices {
   display: grid;
