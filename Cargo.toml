@@ -1,5 +1,5 @@
 [workspace]
-members = ["programs/*", "d-app"]
+members = ["programs/*"]
 # exclude = ["d-app"]
 [profile.release]
 overflow-checks = true
