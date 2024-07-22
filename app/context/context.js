@@ -65,11 +65,12 @@ export const AppProvider = ({ children }) => {
       const votersRegistrationIntervalEnd = Number(proposal.account.votersRegistrationInterval.end) * 1000;
       const votingSessionIntervalStart = Number(proposal.account.votingSessionInterval.start) * 1000;
       const votingSessionIntervalEnd = Number(proposal.account.votingSessionInterval.end) * 1000;
-      if(choicesRegistrationIntervalStart >= now && choicesRegistrationIntervalEnd <= now) {
+
+      if(choicesRegistrationIntervalStart <= now && choicesRegistrationIntervalEnd >= now) {
         tmpProposal.account.period = {0: "Choices Registration"};
-      } else if(votersRegistrationIntervalStart >= now && votersRegistrationIntervalEnd <= now) {
+      } else if(votersRegistrationIntervalStart <= now && votersRegistrationIntervalEnd >= now) {
         tmpProposal.account.period = {1: "Voters Registration"};
-      } else if(votingSessionIntervalStart >= now && votingSessionIntervalEnd <= now) {
+      } else if(votingSessionIntervalStart <= now && votingSessionIntervalEnd >= now) {
         tmpProposal.account.period = {2: "Voting Session"};
       } else {
         tmpProposal.account.period = {3: "Terminate"};
@@ -129,6 +130,7 @@ export const AppProvider = ({ children }) => {
   
       await fetch_proposals();
       if(confirm) {
+        setSuccess('Proposal Create');
         const newProposal = proposals.find(pp=>pp.account.title == title && pp.account.description == description);
         return newProposal;
       }
