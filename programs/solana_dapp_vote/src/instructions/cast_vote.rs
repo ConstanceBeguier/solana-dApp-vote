@@ -10,11 +10,9 @@ pub fn cast_vote(ctx: Context<CastVote>, choice_index: u8) -> Result<()> {
 
     if CHECK_TIMEINTERVALS {
         let now = Clock::get()?.unix_timestamp as u64;
-        require!(
-            proposal_account.voting_session_interval.start < now
-                && now < proposal_account.voting_session_interval.end,
-            VoteError::VotingSessionIsClosed
-        );
+        if !(proposal_account.voting_session_interval.start < now && now < proposal_account.voting_session_interval.end) {
+            return Err(VoteError::VotingSessionIsClosed.into());
+        }
     }
 
     require!(

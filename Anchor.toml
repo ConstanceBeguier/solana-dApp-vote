@@ -5,7 +5,7 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-solana_dapp_vote = "D4qRptv9HurACjb5zjyjsgEQADzPL8jckrqWTs5xuWLH"
+solana_dapp_vote = "5ohdRX4CdPL3vezowNBNiv6szq7tKg9jMDzK8KRRmvkM"
 
 [registry]
 url = "https://api.apr.dev"
