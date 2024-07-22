@@ -16,8 +16,11 @@ import { AppProvider } from "../context/context";
 
 import Header from "../components/Header";
 import style from "../styles/Home.module.css";
+import BackButton from "../components/BackButton";
+import { useRouter } from 'next/router';
 function MyApp({ Component, pageProps }) {
   const endpoint = clusterApiUrl(WalletAdapterNetwork.Devnet); 
+  const router = useRouter();
   // const endpoint = "http://127.0.0.1:8899"; 
 
   const wallets = useMemo(
@@ -34,6 +37,7 @@ function MyApp({ Component, pageProps }) {
           <AppProvider>
             <div className={style.wrapper}>
               <Header />
+              {/* <BackButton /> */}
               <Component {...pageProps} />
             </div>
           </AppProvider>

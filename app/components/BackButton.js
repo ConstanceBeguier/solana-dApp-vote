@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import style from '../styles/BackButton.module.css';
 
 const BackButton = () => {
  const router = useRouter();
@@ -9,7 +10,7 @@ const BackButton = () => {
   };
 
   return (
-    <button onClick={goBack} style={{ padding: '10px 20px', cursor: 'pointer' }}>
+    <button onClick={goBack} className={style.button}>
       Retour
     </button>
   );

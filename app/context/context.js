@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useContext, useMemo } from "react";
 import { SystemProgram, Keypair, PublicKey } from "@solana/web3.js";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { BN } from "bn.js";
-import moment from 'moment';
 
 import {
   getProgram,
@@ -37,6 +36,7 @@ export const AppProvider = ({ children }) => {
   const fetch_proposals = async () => {
     const proposals = await program.account.proposal.all();
     // const sortedVotes = proposals.sort((a, b) => a.account.deadline - b.account.deadline);
+    const now = new Date().getTime();
     const readableProposals = proposals.map(proposal => {
       const tmpProposal = {
         publicKey: '',
@@ -48,6 +48,7 @@ export const AppProvider = ({ children }) => {
           choicesRegistrationInterval: {start:'', end:''},
           votersRegistrationInterval: {start:'', end:''},
           votingSessionInterval: {start:'', end:''},
+          period: {},
         },
       };
 
@@ -58,13 +59,27 @@ export const AppProvider = ({ children }) => {
       tmpProposal.account.choices = (proposal.account.choices.length > 0 ) 
         ? proposal.account.choices.map(ch=> { return { count: ch.count, label: u8ArrayToString(ch.label)}}) 
         : [];
-      tmpProposal.account.choicesRegistrationInterval.start = moment(Number(proposal.account.choicesRegistrationInterval.start) * 1000);
-      tmpProposal.account.choicesRegistrationInterval.end = moment(Number(proposal.account.choicesRegistrationInterval.end) * 1000);
-      tmpProposal.account.votersRegistrationInterval.start = moment(Number(proposal.account.votersRegistrationInterval.start) * 1000);
-      tmpProposal.account.votersRegistrationInterval.end = moment(Number(proposal.account.votersRegistrationInterval.end) * 1000);
-      tmpProposal.account.votingSessionInterval.start = moment(Number(proposal.account.votingSessionInterval.start) * 1000);
-      tmpProposal.account.votingSessionInterval.end = moment(Number(proposal.account.votingSessionInterval.end) * 1000);
-
+      const choicesRegistrationIntervalStart = Number(proposal.account.choicesRegistrationInterval.start) * 1000;
+      const choicesRegistrationIntervalEnd = Number(proposal.account.choicesRegistrationInterval.end) * 1000;
+      const votersRegistrationIntervalStart = Number(proposal.account.votersRegistrationInterval.start) * 1000;
+      const votersRegistrationIntervalEnd = Number(proposal.account.votersRegistrationInterval.end) * 1000;
+      const votingSessionIntervalStart = Number(proposal.account.votingSessionInterval.start) * 1000;
+      const votingSessionIntervalEnd = Number(proposal.account.votingSessionInterval.end) * 1000;
+      if(choicesRegistrationIntervalStart >= now && choicesRegistrationIntervalEnd <= now) {
+        tmpProposal.account.period = {0: "Choices Registration"};
+      } else if(votersRegistrationIntervalStart >= now && votersRegistrationIntervalEnd <= now) {
+        tmpProposal.account.period = {1: "Voters Registration"};
+      } else if(votingSessionIntervalStart >= now && votingSessionIntervalEnd <= now) {
+        tmpProposal.account.period = {2: "Voting Session"};
+      } else {
+        tmpProposal.account.period = {3: "Terminate"};
+      }
+      tmpProposal.account.choicesRegistrationInterval.start = new Date(choicesRegistrationIntervalStart);
+      tmpProposal.account.choicesRegistrationInterval.end = new Date(choicesRegistrationIntervalEnd);
+      tmpProposal.account.votersRegistrationInterval.start = new Date(votersRegistrationIntervalStart);
+      tmpProposal.account.votersRegistrationInterval.end = new Date(votersRegistrationIntervalEnd);
+      tmpProposal.account.votingSessionInterval.start = new Date(votingSessionIntervalStart);
+      tmpProposal.account.votingSessionInterval.end = new Date(votingSessionIntervalEnd);
       return tmpProposal;
     })
     setProposals(readableProposals);
@@ -104,9 +119,7 @@ export const AppProvider = ({ children }) => {
         wallet,
         SystemProgram.programId.toString()
       )
-      // const proposalTitle = stringToU8Array16("title test");
-      // const proposalDesc = stringToU8Array32("desc test");
-      debugger;
+
       const txHash = await program.methods
         .createProposal(
           stringToU8Array16(title), 
@@ -131,6 +144,7 @@ export const AppProvider = ({ children }) => {
       await fetch_proposals();
       if(confirm) {
         const newProposal = proposals.find(pp=>pp.account.title == title && pp.account.description == description);
+        console.log("newProposal", newProposal)
         return newProposal;
       }
     } catch (err) {

@@ -74,3 +74,16 @@ export const isValidPublicKey = (pubkeyString) => {
     return false;  // Une erreur indique que la chaîne n'est pas une clé publique valide
   }
 }
+
+export const toCamelCase = (text) => {
+    const words = text.split(' ');
+
+  const camelCaseWords = words.map((word, index) => {
+      if (index === 0) {
+          return word.toLowerCase();
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+
+  return camelCaseWords.join('');
+}
