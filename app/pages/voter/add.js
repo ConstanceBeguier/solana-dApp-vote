@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from "../../context/context";
 import style from '../../styles/Proposal.module.css';
 import { useRouter } from 'next/router';
@@ -7,12 +7,13 @@ const AddVoter = () => {
     const router = useRouter();
     const { proposalPK } = router.query; // Accéder aux paramètres de requête
     const { isCo, proposals, register_voter } = useAppContext();
+    const [proposal, setProposal] = useState({});
     const [voter, setVoter] = useState('');
     const [error, setError] = useState('');
     useEffect(()=>{
-      const currentPP = proposals.find((pp)=>pp.publicKey == id);
+      const currentPP = proposals.find((pp)=>pp.publicKey == proposalPK);
       setProposal(currentPP);
-    }, [id,proposals, isCo]);
+    }, [proposalPK, proposals, isCo]);
     const registerVoter = () => {
       if(isValidPublicKey(voter)){
         register_voter(

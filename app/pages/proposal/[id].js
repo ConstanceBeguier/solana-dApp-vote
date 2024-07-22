@@ -49,7 +49,6 @@ function ProposalDetails() {
   },[proposal, now]);
 
   const castVote = async (index) => {
-    console.log(curentBallot); 
 
       const ballot = await fetch_ballot(proposal.publicKey);
       if(ballot?.choiceIndex == 255) {
