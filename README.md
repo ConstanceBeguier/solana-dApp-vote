@@ -84,3 +84,14 @@ or:
 Our frontend has been made with React and web3.js
 
 Here is how it looks like:
+
+![Frontend UI](./resources/app.png)
+
+### How to build
+
+> cd app/
+> yarn install && yarn build
+
+### How to run
+
+> yarn start
