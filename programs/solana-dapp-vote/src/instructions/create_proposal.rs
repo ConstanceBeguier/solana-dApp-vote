@@ -61,7 +61,7 @@ pub fn create_proposal(
 
 #[derive(Accounts)]
 pub struct CreateProposal<'info> {
-    #[account(init, payer = admin, space = 8 + 32 + 16 + 32 + (16 + 2)*MAX_COUNT_OF_CHOICES + 8*6)]
+    #[account(init, payer = admin, space = 8 + 32 + 16 + 32 + 4 + (16 + 2)*MAX_COUNT_OF_CHOICES + 8*6)]
     pub proposal: Account<'info, Proposal>,
     #[account(mut)]
     pub admin: Signer<'info>,

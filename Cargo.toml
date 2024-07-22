@@ -1,6 +1,5 @@
 [workspace]
 members = ["programs/*"]
-exclude = ["d-app"]
 [profile.release]
 overflow-checks = true
 lto = "fat"

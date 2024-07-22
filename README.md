@@ -1,28 +1,44 @@
 # Solana Decentralized Voting Platform
 
 This project is a decentralized voting platform leveraging the Solana blockchain to ensure secure and transparent voting
-processes.
-It allows for the initiation of various voting sessions that are accessible to all participants.
+processes. It allows for the initiation of various voting sessions that are accessible to all participants.
 
-## Voting Sessions
+## 👉️ Information
+
+- **Developers:** Sébastien Gazeau, Maxime Auburtin, and Constance Beguier
+- **Deployed dApp Frontend:** [Link to Vercel Deployment](https://your-dapp-frontend.vercel.app)
+- **Program Explorer Link:** [Solscan Explorer](https://solscan.io/account/4AEtDMG3A5rFTFwj6KyA6K41dxxpagemC4CaG5w9oABc?cluster=devnet)
+- **Tech Stack Used:**
+  - **Frontend:** next 12.1.4, react 18.0.0
+  - **Unit Tests:** mocha 9.0.3, chai 4.3.4
+  - **Program:** anchor-cli 0.29.0, rustc 1.79.0
+  - **Phantom Wallet**
+
+---
+
+## 👉️ Solana Program
+
+![Unit tests](./resources/program.png)
+
+### Voting Sessions
 
 Upon the creation of a proposal, where the administrator defines the title, description, and the start and end of each
-period,
-a voting session is divided into three non-overlapping periods:
+period, a voting session is created. A voting session is divided into three non-overlapping periods:
 
 1. **Choice Registration Period:** The administrator can add choices to a proposal.
-2. **Voter Registration Period:** Voters can register to participate in the proposal.
+2. **Voter Registration Period:** The administrator can register voters to participate in the proposal.
 3. **Voting Period:** Registered voters can cast their votes.
 
-## Features
+### Features
 
-- **Create Proposal:** Administrators can create proposals with a title, description, and defined time periods for
+- **Create Proposal:** Administrator can create proposals with a title, description, and defined time periods for
   choice registration, voter registration, and voting.
-- **Add Choices:** Administrators can add choices to an existing proposal during the choice registration period.
-- **Register Voters:** Voters can register to participate in a proposal during the voter registration period.
+- **Add Choices:** Administrator can add choices to an existing proposal during the choice registration period.
+- **Register Voters:** Administrator can register a voter to participate in a proposal during the voter registration
+  period.
 - **Cast Vote:** Registered voters can cast their votes during the voting period.
 
-## Usage
+### Usage
 
 To use the platform, follow these steps:
 
@@ -34,7 +50,34 @@ To use the platform, follow these steps:
     - During the choice registration period, the administrator can add multiple choices to the proposal.
 
 3. **Register Voters `register_voter`:**
-    - During the voter registration period, interested voters can register to participate in the proposal.
+    - During the voter registration period, administrator can register a voter to participate in the proposal.
 
 4. **Cast Votes `cast_vote`:**
-    - During the voting period, registered voters can cast their votes for their preferred choice in the proposal.
+   - During the voting period, each voter can vote for its choice in a proposal
+
+### How to build
+
+> anchor build
+
+---
+
+## 👉️ Unit Testing
+
+Our smart contract has a unit test coverage above 80%
+
+![Unit tests](./resources/tests.png)
+
+To launch tests please use the following command:
+> anchor test
+
+or:
+> solana-test-validator
+> anchor test --skip-local-validator
+
+---
+
+## 👉️ Frontend
+
+Our frontend has been made with React and web3.js
+
+Here is how it looks like:

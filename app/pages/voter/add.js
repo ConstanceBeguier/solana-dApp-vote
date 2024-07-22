@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from "../../context/context";
 import style from '../../styles/Proposal.module.css';
 import { useRouter } from 'next/router';
@@ -6,11 +6,13 @@ import { isValidPublicKey } from "../../utils/helper";
 const AddVoter = () => {
     const router = useRouter();
     const { proposalPK } = router.query; // Accéder aux paramètres de requête
-  
-    const { register_voter } = useAppContext();
+    const { isCo, proposals, register_voter, error, setError } = useAppContext();
+    const [proposal, setProposal] = useState({});
     const [voter, setVoter] = useState('');
-    const [error, setError] = useState('');
-  
+    useEffect(()=>{
+      const currentPP = proposals.find((pp)=>pp.publicKey == proposalPK);
+      setProposal(currentPP);
+    }, [proposalPK, proposals, isCo]);
     const registerVoter = () => {
       if(isValidPublicKey(voter)){
         register_voter(
@@ -24,7 +26,7 @@ const AddVoter = () => {
   
     return (
       <div className={style.container}>
-        <label className={style.label} htmlFor="choice">Electeur à ajouter : {proposalPK} </label>
+        <label className={style.label} htmlFor="choice">Add voter for : {proposalPK} </label>
         <input
           className={style.input}
           type="text"
@@ -32,7 +34,7 @@ const AddVoter = () => {
           value={voter}
           onChange={(e) => setVoter(e.target.value)}
         />
-
+        {(error) && <span className={style.error}>{error}</span>}
         <a className={style.button} onClick={registerVoter}>
           Ajouter un Electeur
         </a>

@@ -11,7 +11,7 @@ export const mockWallet = () => {
 
 export const confirmTx = async (txHash, connection) => {
   const blockhashInfo = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({
+  return await connection.confirmTransaction({
     blockhash: blockhashInfo.blockhash,
     lastValidBlockHeight: blockhashInfo.lastValidBlockHeight,
     signature: txHash,
@@ -73,4 +73,17 @@ export const isValidPublicKey = (pubkeyString) => {
   } catch (error) {
     return false;  // Une erreur indique que la chaîne n'est pas une clé publique valide
   }
+}
+
+export const toCamelCase = (text) => {
+    const words = text.split(' ');
+
+  const camelCaseWords = words.map((word, index) => {
+      if (index === 0) {
+          return word.toLowerCase();
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+
+  return camelCaseWords.join('');
 }

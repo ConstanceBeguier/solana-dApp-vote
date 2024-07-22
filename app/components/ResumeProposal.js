@@ -1,22 +1,15 @@
 import { useEffect, useState } from "react";
-import moment from 'moment';
+
 import style from '../styles/ResumeProposal.module.css';
-const ResumeProposal = ({publicKey, account}) => {
-  console.log(publicKey)
+import { toCamelCase } from "../utils/helper";
+const ResumeProposal = ({publicKey, account, setActiveClass}) => {
   const [period, setPeriod] = useState('');
-  const now = moment();
+
   useEffect(()=>{
-      // Comparer avec l'heure actuelle pour déterminer l'intervalle actuel
-    if (now.isBetween(account.choicesRegistrationInterval.start, account.choicesRegistrationInterval.end, undefined, '[]')) {
-      setPeriod("Choices Registration");
-    } else if (now.isBetween(account.votersRegistrationInterval.start, account.votersRegistrationInterval.end, undefined, '[]')) {
-      setPeriod("Voters Registration");
-    } else if (now.isBetween(account.votingSessionInterval.start, account.votingSessionInterval.end, undefined, '[]')) {
-      setPeriod("Voting Session");
-    } else {
-      setPeriod("Terminate");
-    }
-  },[account, now]);
+      setPeriod(Object.values(account.period));
+      setActiveClass(toCamelCase(Object.values(account.period)[0].toString()));
+  },[account]);
+
   return (
     <div className={style.card}>
       <div className={style.cardHeader}>

@@ -47,5 +47,6 @@
 }
 
 .nav {
+  display: contents;
   color: white;
 }

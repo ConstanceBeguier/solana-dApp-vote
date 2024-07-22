@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("8KcDj4FdPm6Dq6KoLFCAgPrAYEMbXtE9Ruc7B62UGeyJ"); //D4qRptv9HurACjb5zjyjsgEQADzPL8jckrqWTs5xuWLH // /
+declare_id!("4AEtDMG3A5rFTFwj6KyA6K41dxxpagemC4CaG5w9oABc");
 
 pub mod constants;
 pub mod errors;
@@ -45,8 +45,8 @@ pub mod solana_dapp_vote {
         instructions::add_choice_for_one_proposal(ctx, choice)
     }
 
-    pub fn register_voter(ctx: Context<RegisterVoter>) -> Result<()> {
-        instructions::register_voter(ctx)
+    pub fn register_voter(ctx: Context<RegisterVoter>, voter_pubkey: Pubkey) -> Result<()> {
+        instructions::register_voter(ctx, voter_pubkey)
     }
 
     pub fn cast_vote(ctx: Context<CastVote>, choice_index: u8) -> Result<()> {

@@ -2,11 +2,10 @@ import { createContext, useState, useEffect, useContext, useMemo } from "react";
 import { SystemProgram, Keypair, PublicKey } from "@solana/web3.js";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { BN } from "bn.js";
-import moment from 'moment';
 
 import {
   getProgram,
-  getProposalAddress
+  getBallotAddress
 } from "../utils/program";
 import { confirmTx, mockWallet, stringToU8Array16, stringToU8Array32, u8ArrayToString } from "../utils/helper";
 
@@ -37,6 +36,7 @@ export const AppProvider = ({ children }) => {
   const fetch_proposals = async () => {
     const proposals = await program.account.proposal.all();
     // const sortedVotes = proposals.sort((a, b) => a.account.deadline - b.account.deadline);
+    const now = new Date().getTime();
     const readableProposals = proposals.map(proposal => {
       const tmpProposal = {
         publicKey: '',
@@ -44,9 +44,11 @@ export const AppProvider = ({ children }) => {
           admin: '',
           title: '',
           description: '',
+          choices: [],
           choicesRegistrationInterval: {start:'', end:''},
           votersRegistrationInterval: {start:'', end:''},
           votingSessionInterval: {start:'', end:''},
+          period: {},
         },
       };
 
@@ -54,32 +56,41 @@ export const AppProvider = ({ children }) => {
       tmpProposal.account.admin = proposal.account.admin.toString();
       tmpProposal.account.title = u8ArrayToString(proposal.account.title);
       tmpProposal.account.description = u8ArrayToString(proposal.account.description);
-      tmpProposal.account.choicesRegistrationInterval.start = moment(Number(proposal.account.choicesRegistrationInterval.start));
-      tmpProposal.account.choicesRegistrationInterval.end = moment(Number(proposal.account.choicesRegistrationInterval.end));
-      tmpProposal.account.votersRegistrationInterval.start = moment(Number(proposal.account.votersRegistrationInterval.start));
-      tmpProposal.account.votersRegistrationInterval.end = moment(Number(proposal.account.votersRegistrationInterval.end));
-      tmpProposal.account.votingSessionInterval.start = moment(Number(proposal.account.votingSessionInterval.start));
-      tmpProposal.account.votingSessionInterval.end = moment(Number(proposal.account.votingSessionInterval.end));
-
+      tmpProposal.account.choices = (proposal.account.choices.length > 0 ) 
+        ? proposal.account.choices.map(ch=> { return { count: ch.count, label: u8ArrayToString(ch.label)}}) 
+        : [];
+      const choicesRegistrationIntervalStart = Number(proposal.account.choicesRegistrationInterval.start) * 1000;
+      const choicesRegistrationIntervalEnd = Number(proposal.account.choicesRegistrationInterval.end) * 1000;
+      const votersRegistrationIntervalStart = Number(proposal.account.votersRegistrationInterval.start) * 1000;
+      const votersRegistrationIntervalEnd = Number(proposal.account.votersRegistrationInterval.end) * 1000;
+      const votingSessionIntervalStart = Number(proposal.account.votingSessionInterval.start) * 1000;
+      const votingSessionIntervalEnd = Number(proposal.account.votingSessionInterval.end) * 1000;
+      if(choicesRegistrationIntervalStart >= now && choicesRegistrationIntervalEnd <= now) {
+        tmpProposal.account.period = {0: "Choices Registration"};
+      } else if(votersRegistrationIntervalStart >= now && votersRegistrationIntervalEnd <= now) {
+        tmpProposal.account.period = {1: "Voters Registration"};
+      } else if(votingSessionIntervalStart >= now && votingSessionIntervalEnd <= now) {
+        tmpProposal.account.period = {2: "Voting Session"};
+      } else {
+        tmpProposal.account.period = {3: "Terminate"};
+      }
+      tmpProposal.account.choicesRegistrationInterval.start = new Date(choicesRegistrationIntervalStart);
+      tmpProposal.account.choicesRegistrationInterval.end = new Date(choicesRegistrationIntervalEnd);
+      tmpProposal.account.votersRegistrationInterval.start = new Date(votersRegistrationIntervalStart);
+      tmpProposal.account.votersRegistrationInterval.end = new Date(votersRegistrationIntervalEnd);
+      tmpProposal.account.votingSessionInterval.start = new Date(votingSessionIntervalStart);
+      tmpProposal.account.votingSessionInterval.end = new Date(votingSessionIntervalEnd);
       return tmpProposal;
     })
     setProposals(readableProposals);
-    
 
-    // if(wallet && wallet.publicKey){
-    //   const updatedVotes = await Promise.all(sortedVotes.map(async(vote) => {
-    //     const voterAccountAddress = await getVoterAddress(vote.publicKey, wallet.publicKey);
-    //     const voterInfo = await program.account.voter.fetchNullable(voterAccountAddress);
-    //     return {
-    //       ...vote,
-    //       voterInfo: voterInfo
-    //     };
-    //   }));
-
-    //   setProposals(updatedVotes);
-    // }
   }
 
+  const fetch_ballot = async (proposalPK) => {
+    const ballotAddress = await getBallotAddress(new PublicKey(proposalPK), wallet.publicKey);
+    const ballot = await program.account.ballot.fetch(ballotAddress);
+    return ballot;
+  }
   const create_proposal = async (
     title,
     description,
@@ -94,21 +105,7 @@ export const AppProvider = ({ children }) => {
     setSuccess("");
     try {
       const proposal = Keypair.generate();
-      console.log(
-        stringToU8Array16(title), 
-        stringToU8Array32(description),
-        new BN(cr_start),
-        new BN(cr_end),
-        new BN(vr_start),
-        new BN(vr_end),
-        new BN(vs_start),
-        new BN(vs_end),
-        proposal.publicKey,
-        wallet,
-        SystemProgram.programId.toString()
-      )
-      // const proposalTitle = stringToU8Array16("title test");
-      // const proposalDesc = stringToU8Array32("desc test");
+
       const txHash = await program.methods
         .createProposal(
           stringToU8Array16(title), 
@@ -127,13 +124,16 @@ export const AppProvider = ({ children }) => {
         })
         .signers([proposal])
         .rpc();
-        console.log(`tx: ${txHash}`)
-      await confirmTx(txHash, connection);
 
-      fetch_proposals();
+      const confirm = await confirmTx(txHash, connection);
+  
+      await fetch_proposals();
+      if(confirm) {
+        const newProposal = proposals.find(pp=>pp.account.title == title && pp.account.description == description);
+        return newProposal;
+      }
     } catch (err) {
-      console.log("err", err);
-      setError(err.message);
+      setError(err.message.split('Error Message:')[1]);
     }
   };
 
@@ -148,54 +148,52 @@ export const AppProvider = ({ children }) => {
         )
         .accounts({
           proposal: proposalPK,
-          signer: wallet.publicKey,
+          admin: wallet.publicKey,
         })
-        .signers([wallet])
+        .signers([])
         .rpc();
       await confirmTx(txHash, connection);
 
       fetch_proposals();
     } catch (err) {
-      console.log("err", err);
-      setError(err.message);
+      setError(err.message.split('Error Message:')[1]);
     }
   };
   const register_voter = async (voter, proposalPK) => {    
     setError("");
     setSuccess("");
     try {
-      const ppAccountAddress = await getProposalAddress(new PublicKey(proposalPK), new PublicKey(voter));
+      const ballotAddress = await getBallotAddress(new PublicKey(proposalPK), new PublicKey(voter));
 
       const txHash = await program.methods
-        .registerVoter()
+        .registerVoter(new PublicKey(voter))
         .accounts({
           proposal: proposalPK,
-          ballot: ppAccountAddress,
-          voter: wallet.publicKey,
+          ballot: ballotAddress,
+          admin: wallet.publicKey,
           systemProgram: SystemProgram.programId,
         })
-        .signers([wallet])
+        .signers([])
         .rpc();
       await confirmTx(txHash, connection);
 
       fetch_proposals();
     } catch (err) {
-      console.log("err", err);
-      setError(err.message);
+      setError(err.message.split('Error Message:')[1]);
     }
   };
   const cast_vote = async (index, proposalPK) => {
     try {
-      const ppAccountAddress = await getProposalAddress(proposalPK, wallet.publicKey);
+      const ballotAddress = await getBallotAddress(new PublicKey(proposalPK), wallet.publicKey);
 
       const txHash = await program.methods
       .castVote(index)
       .accounts({
         proposal: proposalPK,
-        ballot: ppAccountAddress,
+        ballot: ballotAddress,
         voter: wallet.publicKey,
       })
-      .signers([wallet])
+      .signers([])
       .rpc();
       await confirmTx(txHash, connection);
 
@@ -210,6 +208,7 @@ export const AppProvider = ({ children }) => {
       value={{
         create_proposal,
         fetch_proposals,
+        fetch_ballot,
         cast_vote,
         register_voter,
         add_choice_for_one_proposal,
