@@ -7,6 +7,9 @@ skip-lint = false
 [programs.localnet]
 solana_dapp_vote = "4AEtDMG3A5rFTFwj6KyA6K41dxxpagemC4CaG5w9oABc"
 
+[programs.devnet]
+solana_dapp_vote = "4AEtDMG3A5rFTFwj6KyA6K41dxxpagemC4CaG5w9oABc"
+
 [registry]
 url = "https://api.apr.dev"
 
