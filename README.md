@@ -38,4 +38,12 @@ To use the platform, follow these steps:
     - During the voter registration period, administrator can register a voter to participate in the proposal.
 
 4. **Cast Votes `cast_vote`:**
-    - During the voting period, registered voters can cast their vote for their preferred choice in the proposal.
+
+## Additional Information
+
+- **Developers:** Sébastien Gazeau, Maxime Auburtin, and Constance Beguier
+- **Deployed dApp Frontend:** [Link to Vercel Deployment](https://your-dapp-frontend.vercel.app)
+- **Program Explorer Link:** [Solscan Explorer](https://solscan.io/?cluster=devnet)
+- **Tech Stack Used:**
+    - **Frontend:** React, TypeScript
+    - **Blockchain Framework:** Anchor
