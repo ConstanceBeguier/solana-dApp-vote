@@ -49,7 +49,7 @@ const AddChoice = () => {
         />
         {(error) && <span className={style.error}>{error}</span>}
         <a className={style.button} onClick={createProposal}>
-          Ajouter un choix
+          Add Choice
         </a>
       </div>
     );

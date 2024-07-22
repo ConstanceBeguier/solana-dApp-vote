@@ -4,7 +4,7 @@ import style from '../../styles/Proposal.module.css';
 import { useRouter } from 'next/router';
 const CreateProposal = () => {
   const router = useRouter();
-  const { create_proposal } = useAppContext();
+  const { create_proposal, error, success } = useAppContext();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dateCRStart, setDateCRStart] = useState('');
@@ -50,7 +50,7 @@ const CreateProposal = () => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <label className={style.label} htmlFor="date-input-cr">choices_registration:</label>
+      <label className={style.label} htmlFor="date-input-cr">Choices Registration:</label>
       <div className={style.group}>
 
         <div>
@@ -70,11 +70,14 @@ const CreateProposal = () => {
             id="date-input-cr-end"
             className={style.input}
             value={dateCREnd}
-            onChange={(e) => setDateCREnd(e.target.value)}
+            onChange={(e) =>{
+              setDateCREnd(e.target.value);
+              setDateVRStart(e.target.value)
+            }}
           />
         </div>
       </div>
-      <label className={style.label} htmlFor="date-input-vr">votes_registration:</label>
+      <label className={style.label} htmlFor="date-input-vr">Votes Registration:</label>
       <div className={style.group}>
 
         <div>
@@ -84,7 +87,10 @@ const CreateProposal = () => {
             id="date-input-vr-start"
             className={style.input}
             value={dateVRStart}
-            onChange={(e) => setDateVRStart(e.target.value)}
+            onChange={(e) => {
+              console.log(e.target.value)
+              setDateVRStart(e.target.value)
+            }}
           />
         </div>
         <div>
@@ -94,11 +100,14 @@ const CreateProposal = () => {
             id="date-input-vr-end"
             className={style.input}
             value={dateVREnd}
-            onChange={(e) => setDateVREnd(e.target.value)}
+            onChange={(e) => {
+              setDateVREnd(e.target.value)
+              setDateVSStart(e.target.value)
+            }}
           />
         </div>
       </div>
-      <label className={style.label} htmlFor="date-input-vs">voting_session:</label>
+      <label className={style.label} htmlFor="date-input-vs">Voting Session:</label>
       <div className={style.group}>
 
         <div>
@@ -122,8 +131,10 @@ const CreateProposal = () => {
           />
         </div>
       </div>
+      {(error) && <span className={style.error}>{error}</span>}
+      {(success) && <span className={style.success}>{success}</span>}
       <a className={style.button} onClick={createProposal}>
-        Creer un vote
+        Create proposal
       </a>
     </div>
   );

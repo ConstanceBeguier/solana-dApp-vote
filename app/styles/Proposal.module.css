@@ -49,7 +49,7 @@
   font-weight: 500;
   color: #333;
 }
-.error {
+.error, .success {
   color: red;
   margin-bottom: 0.5em;
   display: inline-block;
