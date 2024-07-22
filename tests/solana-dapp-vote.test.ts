@@ -281,9 +281,9 @@ describe('solana-dapp-vote unit testing', () => {
                 .addChoiceForOneProposal(choice0)
                 .accounts({
                     proposal: proposal.publicKey,
-                    admin: voter0.publicKey,
+                    admin: admin.publicKey,
                 })
-                .signers([admin])
+                .signers([voter0])
                 .rpc();
             }
             catch (error) {
@@ -399,10 +399,10 @@ describe('solana-dapp-vote unit testing', () => {
                     .accounts({
                         proposal: proposal.publicKey,
                         ballot: ballot0AccountAddr,
-                        admin: voter0.publicKey,
+                        admin: admin.publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
-                    .signers([admin])
+                    .signers([voter0])
                     .rpc();
                 
                 await connection.confirmTransaction(txRegisterVoter0);

@@ -13,15 +13,6 @@ pub fn add_choice_for_one_proposal(
     if CHECK_TIMEINTERVALS {
         let now = Clock::get()?.unix_timestamp as u64;
 
-        /*
-        msg!("Now: {}", now);
-        msg!(
-            "Choices registration interval: {} - {}",
-            proposal_account.choices_registration_interval.start,
-            proposal_account.choices_registration_interval.end,
-        );
-        */
-
         if proposal_account.choices_registration_interval.start > now || now > proposal_account.voters_registration_interval.end {
             return Err(VoteError::ChoicesRegistrationIsClosed.into());
         }
