@@ -9,7 +9,7 @@ processes. It allows for the initiation of various voting sessions that are acce
   - [Sébastien Gazeau](https://github.com/SebGazeau): Frontend
   - [Maxime Auburtin](https://github.com/manthis) : Unit tests
   - [Constance Beguier](https://github.com/ConstanceBeguier): Solana Program
-- **Deployed dApp Frontend:** [Link to Vercel Deployment](https://your-dapp-frontend.vercel.app)
+- **Deployed dApp Frontend:** [Link to Vercel Deployment](https://alyrasollivote.vercel.app/)
 - **Program Explorer Link:** [Solscan Explorer](https://solscan.io/account/4AEtDMG3A5rFTFwj6KyA6K41dxxpagemC4CaG5w9oABc?cluster=devnet)
 - **Tech Stack Used:**
   - **Frontend:** next 12.1.4, react 18.0.0
