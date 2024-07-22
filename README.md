@@ -9,9 +9,10 @@ processes. It allows for the initiation of various voting sessions that are acce
 - **Deployed dApp Frontend:** [Link to Vercel Deployment](https://your-dapp-frontend.vercel.app)
 - **Program Explorer Link:** [Solscan Explorer](https://solscan.io/?cluster=devnet)
 - **Tech Stack Used:**
-  - **Frontend:** React, TypeScript
+  - **Frontend:** next 12.1.4, react 18.0.0
   - **Unit Tests:** mocha 9.0.3, chai 4.3.4
   - **Program:** anchor-cli 0.29.0, rustc 1.79.0
+  - **Phantom Wallet** 
 
 ---
 
