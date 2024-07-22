@@ -12,7 +12,7 @@ processes. It allows for the initiation of various voting sessions that are acce
   - **Frontend:** next 12.1.4, react 18.0.0
   - **Unit Tests:** mocha 9.0.3, chai 4.3.4
   - **Program:** anchor-cli 0.29.0, rustc 1.79.0
-  - **Phantom Wallet** 
+  - **Phantom Wallet**
 
 ---
 
