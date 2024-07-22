@@ -7,7 +7,7 @@ processes. It allows for the initiation of various voting sessions that are acce
 
 - **Developers:** Sébastien Gazeau, Maxime Auburtin, and Constance Beguier
 - **Deployed dApp Frontend:** [Link to Vercel Deployment](https://your-dapp-frontend.vercel.app)
-- **Program Explorer Link:** [Solscan Explorer](https://solscan.io/?cluster=devnet)
+- **Program Explorer Link:** [Solscan Explorer](https://solscan.io/account/4AEtDMG3A5rFTFwj6KyA6K41dxxpagemC4CaG5w9oABc?cluster=devnet)
 - **Tech Stack Used:**
   - **Frontend:** next 12.1.4, react 18.0.0
   - **Unit Tests:** mocha 9.0.3, chai 4.3.4
