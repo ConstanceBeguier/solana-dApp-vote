@@ -115,7 +115,6 @@ describe('solana-dapp-vote unit testing', () => {
             AIRDROP_AMOUNT * anchor.web3.LAMPORTS_PER_SOL
         );
         await connection.confirmTransaction(txVoter2);
-
         
     });
 
@@ -124,7 +123,7 @@ describe('solana-dapp-vote unit testing', () => {
         proposal = Keypair.generate();
         proposalTitle = "title test";
         proposalDesc = "desc test";
-        const STEP_IN_SECONDS = 5;
+        const STEP_IN_SECONDS = 5;  // DO NOT CHANGE THIS VALUE
         choices_registration_start = addSecondsToDate(new Date(), STEP_IN_SECONDS);
         choices_registration_end = addSecondsToDate(choices_registration_start, STEP_IN_SECONDS);
         voters_registration_start = addSecondsToDate(choices_registration_end, STEP_IN_SECONDS);
@@ -152,7 +151,6 @@ describe('solana-dapp-vote unit testing', () => {
             .rpc();
     });
 
-    // 1. create_proposal tests
     describe('create_proposal', () => {
 
         it('can create a new proposal with valid parameters', async () => {
@@ -208,7 +206,6 @@ describe('solana-dapp-vote unit testing', () => {
         });
     });
 
-    // 2. add_choice_for_one_proposal tests
     describe('add_choice_for_one_proposal', () => {
 
         it('it will add a choice to an existing proposal', async () => {
@@ -297,6 +294,7 @@ describe('solana-dapp-vote unit testing', () => {
 
         it("can't add the same choice twice", async () => {
             await waitUntil(choices_registration_start);
+            await new Promise((resolve) => setTimeout(resolve, 2000));
 
             try {
                 for (let i = 0; i < 2; i++) {
@@ -318,11 +316,11 @@ describe('solana-dapp-vote unit testing', () => {
             }
         });
 
-        it.only("can't add more than 5 choices to a proposal", async () => {
+        it("can't add more than 10 choices to a proposal", async () => {
             await waitUntil(choices_registration_start);
 
             try {
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 11; i++) {
                     const choice = stringToU8Array16(i.toString());
                     let txChoice = await program.methods
                         .addChoiceForOneProposal(choice)
@@ -334,14 +332,11 @@ describe('solana-dapp-vote unit testing', () => {
                         .rpc();
 
                     await connection.confirmTransaction(txChoice);
-                    console.log(`Choice ${i} added`);
                 }
             } catch (error) {
                 expect(error).to.be.an('error');
-                console.log((error as Error).message);
-                expect((error as Error).message).to.include("Failed to serialize the account");
+                expect((error as Error).message).to.include("Too many choices for this proposal");
             }
-            console.log("done");
         });
     });
 
@@ -421,9 +416,22 @@ describe('solana-dapp-vote unit testing', () => {
 
     describe('cast_vote', () => {
        
-        it.skip('can cast a valid vote', async () => {
-            await waitUntil(voters_registration_start);
+        it('can cast a valid vote', async () => {
 
+            await waitUntil(choices_registration_start);
+            const choice0 = stringToU8Array16("choice0");
+            let txChoice0 = await program.methods
+                .addChoiceForOneProposal(choice0)
+                .accounts({
+                    proposal: proposal.publicKey,
+                    admin: admin.publicKey,
+                })
+                .signers([admin])
+                .rpc();
+
+            await connection.confirmTransaction(txChoice0);
+
+            await waitUntil(voters_registration_start);
             const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                 [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
                 program.programId
@@ -441,11 +449,9 @@ describe('solana-dapp-vote unit testing', () => {
             
             await connection.confirmTransaction(txRegisterVoter0);
 
-            waitUntil(voting_session_start);
-
-            // Cast vote for voter0
+            await waitUntil(voting_session_start);
             let txCastVote0 = await program.methods
-                .castVote(1)
+                .castVote(0)
                 .accounts({
                     proposal: proposal.publicKey,
                     ballot: ballot0AccountAddr,
@@ -455,13 +461,28 @@ describe('solana-dapp-vote unit testing', () => {
                 .rpc();
                 
             await connection.confirmTransaction(txCastVote0);
+
+            const proposalAccount = await program.account.proposal.fetch(proposal.publicKey);    
+            expect(proposalAccount.choices[0].count).to.eql(1);
         });
 
         it('fails to cast a vote outside of voting period', async () => {
 
             try {
-                await waitUntil(voters_registration_start);
+                await waitUntil(choices_registration_start);
+                const choice0 = stringToU8Array16("choice0");
+                let txChoice0 = await program.methods
+                    .addChoiceForOneProposal(choice0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        admin: admin.publicKey,
+                    })
+                    .signers([admin])
+                    .rpc();
 
+                await connection.confirmTransaction(txChoice0);
+
+                await waitUntil(voters_registration_start);
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
                     program.programId
@@ -479,7 +500,58 @@ describe('solana-dapp-vote unit testing', () => {
                 
                 await connection.confirmTransaction(txRegisterVoter0);
 
-                // Cast vote for voter0
+                let txCastVote0 = await program.methods
+                    .castVote(0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        voter: voter0.publicKey,
+                    })
+                    .signers([voter0])
+                    .rpc();
+                    
+                await connection.confirmTransaction(txCastVote0);
+
+            } catch (error) {
+                expect(error).to.be.an('error');
+                expect((error as Error).message).to.include("Voting session is closed");
+            }
+        });
+
+        it('fails to cast a vote for an invalid choice', async () => {
+            try {
+                await waitUntil(choices_registration_start);
+                const choice0 = stringToU8Array16("choice0");
+                let txChoice0 = await program.methods
+                    .addChoiceForOneProposal(choice0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        admin: admin.publicKey,
+                    })
+                    .signers([admin])
+                    .rpc();
+
+                await connection.confirmTransaction(txChoice0);
+
+                await waitUntil(voters_registration_start);
+                const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
+                    [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
+                    program.programId
+                );
+                let txRegisterVoter0 = await program.methods
+                    .registerVoter(voter0.publicKey)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        admin: admin.publicKey,
+                        systemProgram: anchor.web3.SystemProgram.programId,
+                    })
+                    .signers([admin])
+                    .rpc();
+                
+                await connection.confirmTransaction(txRegisterVoter0);
+
+                await waitUntil(voting_session_start);
                 let txCastVote0 = await program.methods
                     .castVote(1)
                     .accounts({
@@ -494,15 +566,27 @@ describe('solana-dapp-vote unit testing', () => {
 
             } catch (error) {
                 expect(error).to.be.an('error');
-                console.log((error as Error).message);
-                expect((error as Error).message).to.include("Voting session is closed");
+                expect((error as Error).message).to.include("Invalid choice index");
             }
         });
 
-        it.skip('fails to cast a vote for an invalid choice', async () => {
-            try {
-                await waitUntil(voters_registration_start);
+        it("same voter can't vote twice", async () => {
 
+            try {
+                await waitUntil(choices_registration_start);
+                const choice0 = stringToU8Array16("choice0");
+                let txChoice0 = await program.methods
+                    .addChoiceForOneProposal(choice0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        admin: admin.publicKey,
+                    })
+                    .signers([admin])
+                    .rpc();
+
+                await connection.confirmTransaction(txChoice0);
+
+                await waitUntil(voters_registration_start);
                 const [ballot0AccountAddr, bump0] = await PublicKey.findProgramAddress(
                     [proposal.publicKey.toBuffer(), voter0.publicKey.toBuffer()],
                     program.programId
@@ -520,11 +604,9 @@ describe('solana-dapp-vote unit testing', () => {
                 
                 await connection.confirmTransaction(txRegisterVoter0);
 
-                waitUntil(voting_session_start);
-
-                // Cast vote for voter0
+                await waitUntil(voting_session_start);
                 let txCastVote0 = await program.methods
-                    .castVote(100)
+                    .castVote(0)
                     .accounts({
                         proposal: proposal.publicKey,
                         ballot: ballot0AccountAddr,
@@ -535,14 +617,22 @@ describe('solana-dapp-vote unit testing', () => {
                     
                 await connection.confirmTransaction(txCastVote0);
 
+                let txCastVote1 = await program.methods
+                    .castVote(0)
+                    .accounts({
+                        proposal: proposal.publicKey,
+                        ballot: ballot0AccountAddr,
+                        voter: voter0.publicKey,
+                    })
+                    .signers([voter0])
+                    .rpc();
+                    
+                await connection.confirmTransaction(txCastVote1);
+
             } catch (error) {
                 expect(error).to.be.an('error');
-                console.log((error as Error).message);
-                expect((error as Error).message).to.include("Invalid choice index");
+                expect((error as Error).message).to.include("Already voted");
             }
-        });
-
-        it.skip("same voter can't vote twice", async () => {
         });
 
     });
