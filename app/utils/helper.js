@@ -1,13 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 
-export const mockWallet = () => {
-  return {};
-};
 
-// export const shortenPk = (pk, chars = 5) => {
-//   const pkStr = typeof pk === "object" ? pk.toBase58() : pk;
-//   return `${pkStr.slice(0, chars)}...${pkStr.slice(-chars)}`;
-// };
 
 export const confirmTx = async (txHash, connection) => {
   const blockhashInfo = await connection.getLatestBlockhash();
@@ -22,7 +15,7 @@ export const stringToU8Array16 = (input) => {
   const bytes = new TextEncoder().encode(input);
 
   if (bytes.length > 16) {
-      throw new Error("Input string is too long");
+    throw new Error("Input string is too long");
   }
 
   const array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -56,8 +49,8 @@ export const stringToU8Array32 = (input) => {
 export const u8ArrayToString = (array) => {
   const decoder = new TextDecoder('utf-8');
   const standardArray = Array.from(array);
-  let endIndex = standardArray.indexOf(0);  // Trouver le premier zéro qui agit comme terminateur
-  if (endIndex === -1) endIndex = array.length;  // Si pas de zéro, prendre toute la longueur
+  let endIndex = standardArray.indexOf(0);
+  if (endIndex === -1) endIndex = array.length;
   return decoder.decode(new Uint8Array(standardArray.slice(0, endIndex)));
 }
 
@@ -68,10 +61,10 @@ export const u8ArrayToString = (array) => {
  */
 export const isValidPublicKey = (pubkeyString) => {
   try {
-    new PublicKey(pubkeyString);  // Tentative de création d'une nouvelle PublicKey
-    return true;  // Si aucune erreur n'est levée, la chaîne est une clé publique valide
+    new PublicKey(pubkeyString);
+    return true;
   } catch (error) {
-    return false;  // Une erreur indique que la chaîne n'est pas une clé publique valide
+    return false;
   }
 }
 

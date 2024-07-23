@@ -9,6 +9,7 @@ import {
 } from "../utils/program";
 import { confirmTx, mockWallet, stringToU8Array16, stringToU8Array32, u8ArrayToString } from "../utils/helper";
 
+
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
@@ -134,7 +135,13 @@ export const AppProvider = ({ children }) => {
         return proposal.publicKey;
       }
     } catch (err) {
-      setError(err.message.split('Error Message:')[1]);
+      const messageSplit = err.message.split('Error Message:');
+
+      if(messageSplit.length > 1) {
+        setError(messageSplit[1]);
+      }else{
+        setError(err.message);
+      }
       return false;
     }
   };
@@ -156,9 +163,15 @@ export const AppProvider = ({ children }) => {
         .rpc();
       await confirmTx(txHash, connection);
 
-      fetch_proposals();
+      await fetch_proposals();
     } catch (err) {
-      setError(err.message.split('Error Message:')[1]);
+      const messageSplit = err.message.split('Error Message:');
+
+      if(messageSplit.length > 1) {
+        setError(messageSplit[1]);
+      }else{
+        setError(err.message);
+      }
     }
   };
   const register_voter = async (voter, proposalPK) => {    
@@ -181,7 +194,13 @@ export const AppProvider = ({ children }) => {
 
       fetch_proposals();
     } catch (err) {
-      setError(err.message.split('Error Message:')[1]);
+      const messageSplit = err.message.split('Error Message:');
+
+      if(messageSplit.length > 1) {
+        setError(messageSplit[1]);
+      }else{
+        setError(err.message);
+      }
     }
   };
   const cast_vote = async (index, proposalPK) => {
@@ -201,8 +220,13 @@ export const AppProvider = ({ children }) => {
 
       fetch_proposals();
     } catch (err) {
-      console.log("err", err);
-      setError(err.message);
+      const messageSplit = err.message.split('Error Message:');
+
+      if(messageSplit.length > 1) {
+        setError(messageSplit[1]);
+      }else{
+        setError(err.message);
+      }
     }
   }
   return (

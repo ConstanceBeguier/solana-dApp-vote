@@ -61,7 +61,18 @@
 }
 .listChoices {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
   margin-bottom: 20px;
+}
+.choiceItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2em;
+  font-size: smaller;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
 }

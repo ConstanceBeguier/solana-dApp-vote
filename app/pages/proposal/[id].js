@@ -84,16 +84,16 @@ function ProposalDetails() {
         <>
           {period == 2 
             ? <div className={`${style.listChoices} ${style.forVote}`}>
-              <h5 className={style.h5}>List Choices:</h5>
-              {
-                (proposal?.account?.choices.length > 0) 
-                  ? proposal?.account?.choices.map((choice, index) => (
-                    <div key={index} className={style.choiceItem} onClick={() => castVote(index)}>
-                      <span className={style.choiceLabel}>{choice.label}</span>
-                    </div>
-                  ))
-                  : <span className={style.noChoice}>No choice for the moment</span>
-              }
+                <h5 className={style.h5}>List Choices:</h5>
+                {
+                  (proposal?.account?.choices.length > 0) 
+                    ? proposal?.account?.choices.map((choice, index) => (
+                      <div key={index} className={style.choiceItem} onClick={() => castVote(index)}>
+                        <span className={style.choiceLabel}>{choice.label}</span>
+                      </div>
+                    ))
+                    : <span className={style.noChoice}>No choice for the moment</span>
+                }
             </div>
             : period == 3 && 
             <div className={style.result}>

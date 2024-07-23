@@ -15,12 +15,13 @@ const AddChoice = () => {
       setProposal(currentPP);
     }, [proposalPK, proposals, isCo]);
     const createProposal = () => {
+      console.log(choice)
         add_choice_for_one_proposal(
             choice,
             proposalPK
         );
     };
-
+    useEffect(()=>{console.log(error)}, [error])
     return (
       <div className={style.container}>
         <div>
@@ -28,7 +29,7 @@ const AddChoice = () => {
           (proposal?.account?.choices.length > 0) 
             ? (
             <div className={style.listChoices}>
-              <span>List Choices :</span>
+              <h5>List Choices :</h5>
               { proposal?.account?.choices.map((choice, index) => (
                 <div key={index} className={style.choiceItem} onClick={() => castVote(index)}>
                   <span className={style.choiceLabel}>{choice.label}</span>
