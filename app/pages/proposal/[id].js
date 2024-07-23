@@ -109,8 +109,9 @@ function ProposalDetails() {
                             (Number(winnerProposal?.count) > 0)
                                 ? <>
                                     <h6 className={style.ttWin}>Winner:</h6>
-                                    <span
-                                        className={style.infoWin}>{winnerProposal?.label} with {winnerProposal?.count} vote.</span>
+                                    <span className={style.infoWin}>
+                                        {winnerProposal?.label} with {winnerProposal?.count} vote{(Number(winnerProposal?.count) > 1) && <span>s</span>}.
+                                    </span>
                                     <span className={style.ttResultVote}>Detailed list :</span>
                                     <div className={style.resultVote}>
                                         {
