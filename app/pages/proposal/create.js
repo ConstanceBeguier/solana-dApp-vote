@@ -83,7 +83,7 @@ const CreateProposal = () => {
                     />
                 </div>
             </div>
-            <label className={style.label} htmlFor="date-input-vr">Votes Registration:</label>
+            <label className={style.label} htmlFor="date-input-vr">Voters Registration:</label>
             <div className={style.group}>
 
                 <div>
