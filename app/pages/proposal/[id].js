@@ -92,7 +92,7 @@ function ProposalDetails() {
                         {
                             (proposal?.account?.choices.length > 0)
                                 ? proposal?.account?.choices.map((choice, index) => (
-                                    <div key={index} className={style.choiceItem} onClick={() => castVote(index)}>
+                                    <div key={index} className={style.choiceItemBtn} onClick={() => castVote(index)}>
                                         <span className={style.choiceLabel}>{choice.label}</span>
                                     </div>
                                 ))

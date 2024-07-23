@@ -74,17 +74,24 @@
     background-color: #f7f7f7;
     border: 1px solid #ccc;
     border-radius: 5px;
-
 }
 
-.forVOte {
+.choiceItemBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2em;
+    font-size: smaller;
+    background-color: #512da8;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+}
+.choiceItemBtn span {
+    color: white;
 }
 
-.forVOte:hover {
-    background-color: #e9e9e9;
-    /* transform: translateY(-1px); Effet de lévitation légère */
+.choiceItemBtn:hover {
+    background-color: #432093;
 }
 
 .noChoice {

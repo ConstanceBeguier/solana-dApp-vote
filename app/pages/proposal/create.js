@@ -5,7 +5,7 @@ import {useRouter} from 'next/router';
 
 const CreateProposal = () => {
     const router = useRouter();
-    const {create_proposal, error, success, fetch_proposals, proposals} = useAppContext();
+    const {create_proposal, error, success, setSuccess} = useAppContext();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [dateCRStart, setDateCRStart] = useState('');
@@ -35,6 +35,7 @@ const CreateProposal = () => {
         }
     };
     const redirect = (pubKey) => {
+        setSuccess('');
         router.push(`/proposal/${pubKey}`);
     }
     return (
