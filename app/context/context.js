@@ -262,6 +262,8 @@ export const AppProvider = ({children}) => {
                 cast_vote,
                 register_voter,
                 add_choice_for_one_proposal,
+                setError,
+                setSuccess,
                 proposals,
                 error,
                 success,

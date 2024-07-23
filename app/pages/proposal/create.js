@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useAppContext} from "../../context/context";
 import style from '../../styles/Proposal.module.css';
 import {useRouter} from 'next/router';
 
 const CreateProposal = () => {
     const router = useRouter();
-    const {create_proposal, error, success, setSuccess} = useAppContext();
+    const {create_proposal, error, setError, success, setSuccess, isCo} = useAppContext();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [dateCRStart, setDateCRStart] = useState('');
@@ -16,16 +16,31 @@ const CreateProposal = () => {
     const [dateVSEnd, setDateVSEnd] = useState('');
 
     const createProposal = async () => {
-        const createdProposal = await create_proposal(
-            title,
-            description,
-            new Date(dateCRStart).getTime() / 1000,
-            new Date(dateCREnd).getTime() / 1000,
-            new Date(dateVRStart).getTime() / 1000,
-            new Date(dateVREnd).getTime() / 1000,
-            new Date(dateVSStart).getTime() / 1000,
-            new Date(dateVSEnd).getTime() / 1000,
-        );
+      if((new Date(dateCRStart).getTime() / 1000 ) > new Date(dateCREnd).getTime() / 1000){
+        return setError('The interval for saving choices is bad.');
+      }
+      if((new Date(dateVRStart).getTime() / 1000 ) > new Date(dateVREnd).getTime() / 1000){
+        return setError('The interval for saving voters is bad.');
+      }
+      if((new Date(dateVSStart).getTime() / 1000 ) > new Date(dateVSEnd).getTime() / 1000){
+        return setError('The interval for saving voters is bad.');
+      }
+      if((new Date(dateVRStart).getTime() / 1000 ) < new Date(dateCREnd).getTime() / 1000){
+        return setError('The start of voter registration must begin after the end of choice registration.');
+      }
+      if((new Date(dateVSStart).getTime() / 1000 ) < new Date(dateVREnd).getTime() / 1000){
+        return setError('The start of voting must begin after the end of voter registration.');
+      }
+      const createdProposal = await create_proposal(
+          title,
+          description,
+          new Date(dateCRStart).getTime() / 1000,
+          new Date(dateCREnd).getTime() / 1000,
+          new Date(dateVRStart).getTime() / 1000,
+          new Date(dateVREnd).getTime() / 1000,
+          new Date(dateVSStart).getTime() / 1000,
+          new Date(dateVSEnd).getTime() / 1000,
+      );
 
         if (createdProposal) {
 
