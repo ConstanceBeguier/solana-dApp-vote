@@ -34,7 +34,7 @@ const AddChoice = () => {
                                 <label className={style.label}>Existing Choices :</label>
                                 <br/>
                                 {proposal?.account?.choices.map((choice, index) => (
-                                    <div key={index} className={style.choiceItem} onClick={() => castVote(index)}>
+                                    <div key={index} className={style.choiceItem}>
                                         <span className={style.choiceLabel}>{choice.label}</span>
                                     </div>
                                 ))

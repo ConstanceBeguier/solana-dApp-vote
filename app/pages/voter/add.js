@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useAppContext} from "../../context/context";
 import style from '../../styles/Proposal.module.css';
 import {useRouter} from 'next/router';
-import {isValidPublicKey} from "../../utils/helper";
+import {isValidPublicKey, pubKeySplitting} from "../../utils/helper";
 
 const AddVoter = () => {
     const router = useRouter();
@@ -35,10 +35,9 @@ const AddVoter = () => {
                             <div className={style.listChoices}>
                                 <label className={style.label}>Registered voters :</label>
                                 <br/>
-                                {proposal?.account?.voters.map(voter => (
-                                    <div>
-                                        <span>{voter.toLocaleString("fr-FR").substring(0, 20)}...</span>
-                                        <br/>
+                                {proposal?.account?.voters.map((voter, index) => (
+                                    <div key={index} className={style.choiceItem}>
+                                        <span className={style.choiceLabel}>{pubKeySplitting(voter, 4)}</span>
                                     </div>
                                 ))
                                 }
