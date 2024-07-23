@@ -128,14 +128,14 @@ export const AppProvider = ({ children }) => {
 
       const confirm = await confirmTx(txHash, connection);
   
-      await fetch_proposals();
       if(confirm) {
         setSuccess('Proposal Create');
-        const newProposal = proposals.find(pp=>pp.account.title == title && pp.account.description == description);
-        return newProposal;
+        await fetch_proposals();
+        return proposal.publicKey;
       }
     } catch (err) {
       setError(err.message.split('Error Message:')[1]);
+      return false;
     }
   };
 

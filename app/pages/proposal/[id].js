@@ -17,6 +17,7 @@ function ProposalDetails() {
 
   useEffect(()=>{
     const currentPP = proposals.find((pp)=>pp.publicKey == id);
+    console.log(currentPP)
     setProposal(currentPP);
     if(currentPP){
       if(isCo && currentPP?.account?.admin == wallet?.publicKey.toString()){
@@ -26,9 +27,10 @@ function ProposalDetails() {
       }
       setPeriod(Number(Object.keys(currentPP?.account?.period)[0]));
       if(Number(Object.keys(currentPP?.account.period)[0]) === 3) {
-        const highestCountChoice = proposal?.account?.choices.reduce((max, choice) => {
+        const highestCountChoice = currentPP?.account?.choices.reduce((max, choice) => {
             return choice.count > max.count ? choice : max;
-        }, proposal?.account?.choices[0]);
+        }, currentPP?.account?.choices[0]);
+        console.log("highestCountChoice", highestCountChoice);
         setWinnerProposal(highestCountChoice);
       }
     }
@@ -45,7 +47,7 @@ function ProposalDetails() {
   };
   return (
     <div className={style.container}>
-      <h1>Détails de la Proposition</h1>
+      <h1>Proposal Details</h1>
       <div className={style.line}>
         <h5 className={style.h5}>Title : </h5>
         {proposal?.account?.title}
@@ -79,9 +81,9 @@ function ProposalDetails() {
         <h5 className={style.h5}>ID of the Proposal : </h5>
         {id}
         </div>
-        <div className={style.listChoices}>
+        <>
           {period == 2 
-            ? <>
+            ? <div className={`${style.listChoices} ${style.forVote}`}>
               <h5 className={style.h5}>List Choices:</h5>
               {
                 (proposal?.account?.choices.length > 0) 
@@ -92,14 +94,32 @@ function ProposalDetails() {
                   ))
                   : <span className={style.noChoice}>No choice for the moment</span>
               }
-            </>
-            : period == 3 &&
-              <div  className={style.line}>
-              <h5 className={style.h5}>Winner Choices:</h5>
-              <span>{winnerProposal?.label} with {winnerProposal?.count} vote.</span>
             </div>
+            : period == 3 && 
+            <div className={style.result}>
+              <h5 className={style.h5}>Result :</h5>
+              {
+              (Number(winnerProposal?.count) > 0) 
+               ? <>
+                  <h6 className={style.ttWin}>Winner Choices:</h6>
+                  <span className={style.infoWin}>{winnerProposal?.label} with {winnerProposal?.count} vote.</span>
+                  <span className={style.ttResultVote}>Detailed list :</span>
+                  <div className={style.resultVote}>               
+                    {
+                      proposal?.account?.choices.map((choice, index) => (
+                        <div key={index} className={style.choiceItem} onClick={() => castVote(index)}>
+                          <span className={style.choiceLabel}>{choice.label} : {choice.count}</span>
+                        </div>
+                      ))
+                    }
+                  </div>
+                
+                </>
+                : <span className={style.noVote}>no vote</span>
+              }  </div>
+              
           }
-        </div>
+        </>
       {/* Rendu des détails de la proposition ici */}
       {isAdmin && <>
       

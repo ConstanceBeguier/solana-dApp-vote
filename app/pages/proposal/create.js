@@ -4,7 +4,7 @@ import style from '../../styles/Proposal.module.css';
 import { useRouter } from 'next/router';
 const CreateProposal = () => {
   const router = useRouter();
-  const { create_proposal, error, success } = useAppContext();
+  const { create_proposal, error, success, fetch_proposals, proposals } = useAppContext();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dateCRStart, setDateCRStart] = useState('');
@@ -27,10 +27,15 @@ const CreateProposal = () => {
     );
 
     if(createdProposal){
-      router.push(`/proposal/${createdProposal.publicKey}`);
+      
+      setTimeout(() => {
+        redirect(createdProposal);
+      }, 2000);
     }
   };
-
+  const redirect = (pubKey) => {
+    router.push(`/proposal/${pubKey}`);
+  }
   return (
     <div className={style.container}>
       <label className={style.label} htmlFor="title">Titre</label>
