@@ -56,7 +56,7 @@ const AddVoter = () => {
             {(error) && <span className={style.error}>{error}</span>}
             {(success) && <span className={style.success}>{success}</span>}
             <a className={style.button} onClick={registerVoter}>
-                Add
+                Register
             </a>
         </div>
     );

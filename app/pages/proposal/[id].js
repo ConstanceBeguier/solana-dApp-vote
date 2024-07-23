@@ -110,9 +110,10 @@ function ProposalDetails() {
                                 ? <>
                                     <h6 className={style.ttWin}>Winner:</h6>
                                     <span className={style.infoWin}>
-                                        {winnerProposal?.label} with {winnerProposal?.count} vote{(Number(winnerProposal?.count) > 1) && <span>s</span>}.
+                                        {winnerProposal?.label} with {winnerProposal?.count} vote{(Number(winnerProposal?.count) > 1) &&
+                                        <span>s</span>}.
                                     </span>
-                                    <span className={style.ttResultVote}>Detailed list :</span>
+                                    <span className={style.ttResultVote}>Vote Distribution :</span>
                                     <div className={style.resultVote}>
                                         {
                                             proposal?.account?.choices.map((choice, index) => (
