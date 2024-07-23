@@ -1,121 +1,141 @@
 .container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 30px;
-  border-radius: 12px;
-  background-color: #fff;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-  color: #333;
-  font-family: 'Arial', sans-serif;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    color: #333;
+    font-family: 'Arial', sans-serif;
 }
+
 .containerInterval, .line {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
+
 /* .containerInterval {
   display: flex;
   flex-direction: column;
 } */
 .line, .containerInterval div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* padding: 10px 0; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* padding: 10px 0; */
 }
+
 .button {
-  display: inline-block;
-  width: 100%;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  text-align: center;
-  border-radius: 5px;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    background-color: #512da8;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .button:hover {
-  background-color: #45a049;
+    background-color: #432093;
 }
+
 .h5 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #444;
-  padding-bottom: 5px;
-  /* border-bottom: 1px solid #ddd; */
+    font-size: 18px;
+    font-weight: 600;
+    color: #444;
+    padding-bottom: 5px;
+    /* border-bottom: 1px solid #ddd; */
 }
+
 /* .line {
   display: flex;
   align-items: center;
 } */
 .end {
-  margin-left: 1em;
+    margin-left: 1em;
 }
 
 .listChoices {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 10px;
-  margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .choiceItem {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 2em;
-  font-size: smaller;
-  background-color: #f7f7f7;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2em;
+    font-size: smaller;
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 
 }
+
 .forVOte {
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
+
 .forVOte:hover {
-  background-color: #e9e9e9;
-  /* transform: translateY(-1px); Effet de lévitation légère */
+    background-color: #e9e9e9;
+    /* transform: translateY(-1px); Effet de lévitation légère */
 }
 
 .noChoice {
-  grid-column: 1 / -1; /* S'étend sur toutes les colonnes */
-  text-align: center;
-  color: #666;
+    grid-column: 1 / -1; /* S'étend sur toutes les colonnes */
+    text-align: center;
+    color: #666;
 }
 
 .noVote {
-  text-align: end;
+    text-align: end;
 }
+
 .result {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: auto;
-  row-gap: 1ch;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    row-gap: 1ch;
 }
+
 .ttWin {
-  grid-column: 1;
-  grid-row: 2;
-  margin: 0;
-  font-size: 16px;
-  font-weight: 500;
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
 }
+
 .infoWin {
-  grid-column: 2;
-  grid-row: 2;
-  text-align: end;
+    grid-column: 2;
+    grid-row: 2;
+    text-align: end;
 }
+
 .ttResultVote {
-  grid-column: 1;
-  grid-row: 3;
+    grid-column: 1;
+    grid-row: 3;
 }
+
 .resultVote {
-  grid-column: 2;
-  grid-row: 3;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 1ch;
-  margin-top: 20px;
+    grid-column: 2;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 1ch;
+    margin-top: 20px;
+}
+
+.error {
+    color: #b63d3d;
+}
+
+.success {
+    color: #418841;
 }
