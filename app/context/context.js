@@ -203,7 +203,7 @@ export const AppProvider = ({children}) => {
             const confirm = await confirmTx(txHash, connection);
 
             if (confirm) {
-                setSuccess('Voted registered');
+                setSuccess('Voter registered');
                 await fetch_proposals();
             }
         } catch (err) {
