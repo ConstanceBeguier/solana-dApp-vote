@@ -84,6 +84,11 @@ export const AppProvider = ({ children }) => {
       tmpProposal.account.votingSessionInterval.end = new Date(votingSessionIntervalEnd);
       return tmpProposal;
     })
+    readableProposals.sort((a,b) => {
+      const keyA = parseInt(Object.keys(a.account.period)[0], 10);
+      const keyB = parseInt(Object.keys(b.account.period)[0], 10);
+      return keyA - keyB;
+    })
     setProposals(readableProposals);
 
   }

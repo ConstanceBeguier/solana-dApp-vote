@@ -1,5 +1,8 @@
 import { PublicKey } from '@solana/web3.js';
 
+export const mockWallet = () => {
+  return {};
+};
 
 
 export const confirmTx = async (txHash, connection) => {

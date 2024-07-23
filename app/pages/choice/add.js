@@ -15,7 +15,6 @@ const AddChoice = () => {
       setProposal(currentPP);
     }, [proposalPK, proposals, isCo]);
     const createProposal = () => {
-      console.log(choice)
         add_choice_for_one_proposal(
             choice,
             proposalPK
