@@ -36,6 +36,7 @@ export const AppProvider = ({children}) => {
 
     const fetch_proposals = async () => {
         const proposals = await program.account.proposal.all();
+        const ballots = await program.account.ballot.all();
         // const sortedVotes = proposals.sort((a, b) => a.account.deadline - b.account.deadline);
         const now = new Date().getTime();
         const readableProposals = proposals.map(proposal => {
@@ -50,6 +51,7 @@ export const AppProvider = ({children}) => {
                     votersRegistrationInterval: {start: '', end: ''},
                     votingSessionInterval: {start: '', end: ''},
                     period: {},
+                    voters: [],
                 },
             };
 
@@ -84,6 +86,11 @@ export const AppProvider = ({children}) => {
             tmpProposal.account.votersRegistrationInterval.end = new Date(votersRegistrationIntervalEnd);
             tmpProposal.account.votingSessionInterval.start = new Date(votingSessionIntervalStart);
             tmpProposal.account.votingSessionInterval.end = new Date(votingSessionIntervalEnd);
+
+            const voters = ballots.filter(ballot => ballot.account.proposal.toString() === tmpProposal.publicKey);
+            tmpProposal.account.voters = (voters.length > 0)
+                ? voters.map(voter => voter.account.voter.toString()) : [];
+
             return tmpProposal;
         })
         readableProposals.sort((a, b) => {
@@ -100,6 +107,7 @@ export const AppProvider = ({children}) => {
         const ballot = await program.account.ballot.fetch(ballotAddress);
         return ballot;
     }
+
     const create_proposal = async (
         title,
         description,

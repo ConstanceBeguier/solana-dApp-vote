@@ -28,6 +28,24 @@ const AddVoter = () => {
     return (
         <div className={style.container}>
             <h2>{proposal?.account?.title}</h2>
+            <div>
+                {
+                    (proposal?.account?.voters.length > 0)
+                        ? (
+                            <div className={style.listChoices}>
+                                <label className={style.label}>Registered voters :</label>
+                                <br/>
+                                {proposal?.account?.voters.map(voter => (
+                                    <div>
+                                        <span>{voter.toLocaleString("fr-FR").substring(0, 20)}...</span>
+                                        <br/>
+                                    </div>
+                                ))
+                                }
+                            </div>)
+                        : <span className={style.noChoice}>No voter registered</span>
+                }
+            </div>
             <label className={style.label} htmlFor="choice">Register a voter : </label>
             <input
                 className={style.input}
