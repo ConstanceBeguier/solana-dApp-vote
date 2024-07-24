@@ -86,7 +86,6 @@ Our frontend has been made with React and web3.js
 Here is how it looks like:
 
 ![Frontend UI](./resources/app.png)
-![Frontend UI 2](./resources/app2.png)
 
 ### How to build
 
