@@ -14,12 +14,13 @@ const AddVoter = () => {
         const currentPP = proposals.find((pp) => pp.publicKey == proposalPK);
         setProposal(currentPP);
     }, [proposalPK, proposals, isCo]);
-    const registerVoter = () => {
+    const registerVoter = async () => {
         if (isValidPublicKey(voter)) {
-            register_voter(
+            await register_voter(
                 voter, //add in param registerVoter
                 proposalPK
             );
+            setVoter('')
         } else {
             setError('invalid pubkey')
         }

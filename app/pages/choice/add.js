@@ -14,11 +14,12 @@ const AddChoice = () => {
         const currentPP = proposals.find((pp) => pp.publicKey == proposalPK);
         setProposal(currentPP);
     }, [proposalPK, proposals, isCo]);
-    const createProposal = () => {
-        add_choice_for_one_proposal(
+    const createProposal = async () => {
+        await add_choice_for_one_proposal(
             choice,
             proposalPK
         );
+        setChoice('');
     };
     useEffect(() => {
         console.log(error)

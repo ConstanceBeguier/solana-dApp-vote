@@ -35,10 +35,14 @@ export const AppProvider = ({children}) => {
     const [proposals, setProposals] = useState([]);
 
     const fetch_proposals = async () => {
+        const cachedProposals = localStorage.getItem('proposals');
+        if (cachedProposals) {
+            return setProposals(JSON.parse(cachedProposals));
+        }
         const proposals = await program.account.proposal.all();
+        const now = new Date().getTime();
         const ballots = await program.account.ballot.all();
         // const sortedVotes = proposals.sort((a, b) => a.account.deadline - b.account.deadline);
-        const now = new Date().getTime();
         const readableProposals = proposals.map(proposal => {
             const tmpProposal = {
                 publicKey: '',
@@ -100,13 +104,71 @@ export const AppProvider = ({children}) => {
         })
         setProposals(readableProposals);
 
+        localStorage.setItem('proposals', JSON.stringify(readableProposals));
     }
 
+    const fetch_proposal = async (proposalPK) => {
+        const proposal = await program.account.proposal.fetch(proposalPK);
+        const now = new Date().getTime();
+        const ballots = await program.account.ballot.all();
+        const tmpProposal = {
+            publicKey: '',
+            account: {
+                admin: '',
+                title: '',
+                description: '',
+                choices: [],
+                choicesRegistrationInterval: {start: '', end: ''},
+                votersRegistrationInterval: {start: '', end: ''},
+                votingSessionInterval: {start: '', end: ''},
+                period: {},
+                voters: [],
+            },
+        };
+        tmpProposal.publicKey = proposalPK;
+        tmpProposal.account.admin = proposal.admin.toString();
+        tmpProposal.account.title = u8ArrayToString(proposal.title);
+        tmpProposal.account.description = u8ArrayToString(proposal.description);
+        tmpProposal.account.choices = (proposal.choices.length > 0)
+            ? proposal.choices.map(ch => {
+                return {count: ch.count, label: u8ArrayToString(ch.label)}
+            })
+            : [];
+        const choicesRegistrationIntervalStart = Number(proposal.choicesRegistrationInterval.start) * 1000;
+        const choicesRegistrationIntervalEnd = Number(proposal.choicesRegistrationInterval.end) * 1000;
+        const votersRegistrationIntervalStart = Number(proposal.votersRegistrationInterval.start) * 1000;
+        const votersRegistrationIntervalEnd = Number(proposal.votersRegistrationInterval.end) * 1000;
+        const votingSessionIntervalStart = Number(proposal.votingSessionInterval.start) * 1000;
+        const votingSessionIntervalEnd = Number(proposal.votingSessionInterval.end) * 1000;
+
+        if (choicesRegistrationIntervalStart <= now && choicesRegistrationIntervalEnd >= now) {
+            tmpProposal.account.period = {0: "Choices Registration"};
+        } else if (votersRegistrationIntervalStart <= now && votersRegistrationIntervalEnd >= now) {
+            tmpProposal.account.period = {1: "Voters Registration"};
+        } else if (votingSessionIntervalStart <= now && votingSessionIntervalEnd >= now) {
+            tmpProposal.account.period = {2: "Voting Session"};
+        } else {
+            tmpProposal.account.period = {3: "Terminate"};
+        }
+        tmpProposal.account.choicesRegistrationInterval.start = new Date(choicesRegistrationIntervalStart);
+        tmpProposal.account.choicesRegistrationInterval.end = new Date(choicesRegistrationIntervalEnd);
+        tmpProposal.account.votersRegistrationInterval.start = new Date(votersRegistrationIntervalStart);
+        tmpProposal.account.votersRegistrationInterval.end = new Date(votersRegistrationIntervalEnd);
+        tmpProposal.account.votingSessionInterval.start = new Date(votingSessionIntervalStart);
+        tmpProposal.account.votingSessionInterval.end = new Date(votingSessionIntervalEnd);
+
+        const voters = ballots.filter(ballot => ballot.account.proposal.toString() === tmpProposal.publicKey);
+        tmpProposal.account.voters = (voters.length > 0)
+            ? voters.map(voter => voter.account.voter.toString()) : [];
+
+        return tmpProposal;
+    }
     const fetch_ballot = async (proposalPK) => {
         const ballotAddress = await getBallotAddress(new PublicKey(proposalPK), wallet.publicKey);
         const ballot = await program.account.ballot.fetch(ballotAddress);
         return ballot;
     }
+
 
     const create_proposal = async (
         title,
@@ -146,6 +208,7 @@ export const AppProvider = ({children}) => {
 
             if (confirm) {
                 setSuccess('Proposal created');
+                localStorage.removeItem('proposals')
                 await fetch_proposals();
                 return proposal.publicKey;
             }
@@ -180,6 +243,7 @@ export const AppProvider = ({children}) => {
 
             if (confirm) {
                 setSuccess('Choice created');
+                localStorage.removeItem('proposals');
                 await fetch_proposals();
             }
         } catch (err) {
@@ -212,6 +276,7 @@ export const AppProvider = ({children}) => {
 
             if (confirm) {
                 setSuccess('Voter registered');
+                localStorage.removeItem('proposals')
                 await fetch_proposals();
             }
         } catch (err) {
@@ -241,6 +306,7 @@ export const AppProvider = ({children}) => {
 
             if (confirm) {
                 setSuccess('Vote casted');
+                localStorage.removeItem('proposals')
                 await fetch_proposals();
             }
         } catch (err) {
@@ -258,6 +324,7 @@ export const AppProvider = ({children}) => {
             value={{
                 create_proposal,
                 fetch_proposals,
+                fetch_proposal,
                 fetch_ballot,
                 cast_vote,
                 register_voter,

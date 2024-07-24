@@ -110,7 +110,6 @@ const CreateProposal = () => {
                         className={style.input}
                         value={dateVRStart}
                         onChange={(e) => {
-                            console.log(e.target.value)
                             setDateVRStart(e.target.value)
                         }}
                     />

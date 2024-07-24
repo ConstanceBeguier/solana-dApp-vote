@@ -6,7 +6,7 @@ import {useAppContext} from "../../context/context";
 import {useAnchorWallet} from "@solana/wallet-adapter-react";
 
 function ProposalDetails() {
-    const {isCo, proposals, cast_vote, fetch_ballot, success, error} = useAppContext();
+    const {isCo, fetch_proposal, cast_vote, fetch_ballot, success, error} = useAppContext();
     const wallet = useAnchorWallet();
     const router = useRouter();
     const {id} = router.query;
@@ -14,36 +14,63 @@ function ProposalDetails() {
     const [isAdmin, setIsAdmin] = useState(false);
     const [period, setPeriod] = useState();
     const [winnerProposal, setWinnerProposal] = useState();
+    const [timeoutId, setTimeoutId] = useState(null);
+    useEffect(() => {
+        if (id) {
+            proposalDetail();
+        }
+    }, [id, isCo, wallet]);
 
     useEffect(() => {
-        const currentPP = proposals.find((pp) => pp.publicKey == id);
-        console.log(currentPP)
-        setProposal(currentPP);
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [timeoutId]);
+    const proposalDetail = async () => {
+        const currentPP = await fetch_proposal(id);
         if (currentPP) {
+            setProposal(currentPP);
+            const now = new Date().getTime();
             if (isCo && currentPP?.account?.admin == wallet?.publicKey.toString()) {
                 setIsAdmin(true);
             } else {
                 setIsAdmin(false);
             }
+            const nextPhaseTime = getNextPhaseTime(currentPP);
             setPeriod(Number(Object.keys(currentPP?.account?.period)[0]));
             if (Number(Object.keys(currentPP?.account.period)[0]) === 3) {
                 const highestCountChoice = currentPP?.account?.choices.reduce((max, choice) => {
                     return choice.count > max.count ? choice : max;
                 }, currentPP?.account?.choices[0]);
-                console.log("highestCountChoice", highestCountChoice);
                 setWinnerProposal(highestCountChoice);
             }
+            if (nextPhaseTime === Infinity) {
+                return;
+            }
+        
+            const delay = nextPhaseTime - now;
+            const id = setTimeout(() => {
+                proposalDetail();
+            }, delay);
+            setTimeoutId(id); 
         }
-    }, [id, proposals, isCo]);
-
+    }
+    const getNextPhaseTime = (proposal) => {
+        const now = new Date().getTime();
+        const times = [
+            Number(proposal.account.choicesRegistrationInterval.end),
+            Number(proposal.account.votersRegistrationInterval.end),
+            Number(proposal.account.votingSessionInterval.end),
+        ].filter(time => time > now); 
+        return times.length > 0 ? Math.min(...times) : Infinity;
+    };
     const castVote = async (index) => {
-
         const ballot = await fetch_ballot(proposal.publicKey);
         if (ballot?.choiceIndex == 255) {
             const voted = cast_vote(index, proposal.publicKey);
         }
-
-
     };
     return (
         <div className={style.container}>
