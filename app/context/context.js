@@ -290,6 +290,8 @@ export const AppProvider = ({children}) => {
         }
     };
     const cast_vote = async (index, proposalPK) => {
+        setError("");
+        setSuccess("");
         try {
             const ballotAddress = await getBallotAddress(new PublicKey(proposalPK), wallet.publicKey);
 
